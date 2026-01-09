@@ -1,25 +1,220 @@
-<header class="app-header">
-  <div class="header-left">
-    <div class="user-avatar">MG</div>
-    <div class="user-info">
-      <h3>Hello, Maria</h3>
-      <p>Case: HI-2024-00123</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Honest Immigration Client Portal</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+  <!-- LOGIN SCREEN -->
+  <div class="screen" id="loginScreen">
+    <div class="login-container">
+      <div class="logo-section">
+        <div class="logo-circle">HI</div>
+        <h1>Honest Immigration</h1>
+        <p class="tagline">Your immigration journey, made clear.</p>
+      </div>
+
+      <div class="login-form">
+        <h2>Welcome Back</h2>
+        <p class="subtitle">Sign in to check your case progress</p>
+
+        <div class="input-group">
+          <label for="caseNumber">Case Number</label>
+          <input type="text" id="caseNumber" placeholder="HI-2024-00123">
+        </div>
+
+        <div class="input-group">
+          <label for="pin">PIN</label>
+          <input type="password" id="pin" placeholder="••••••">
+        </div>
+
+        <button class="btn-primary" id="loginBtn">
+          <i class="fas fa-lock"></i> Sign In
+        </button>
+
+        <div class="divider">
+          <span>or</span>
+        </div>
+
+        <button class="btn-secondary" id="magicLinkBtn">
+          <i class="fas fa-envelope"></i> Email me a magic link
+        </button>
+
+        <p class="privacy-note">
+          <i class="fas fa-shield-alt"></i> Your information is secure and encrypted.
+        </p>
+      </div>
     </div>
   </div>
 
-  <div class="header-right">
-    <button class="icon-btn" id="notificationsBtn">
-      <i class="fas fa-bell"></i>
-      <span class="badge">3</span>
-    </button>
+  <!-- MAIN APP (Hidden until login) -->
+  <div class="screen" id="appScreen" style="display:none;">
+    
+    <!-- TOP NAVIGATION -->
+    <header class="app-header">
+      <div class="header-left">
+        <div class="user-avatar">MG</div>
+        <div class="user-info">
+          <h3>Hello, Maria</h3>
+          <p>Case: HI-2024-00123</p>
+        </div>
+      </div>
 
-    <button class="icon-btn" id="educationBtn">
-      <i class="fas fa-graduation-cap"></i>
-    </button>
+      <div class="header-right">
+        <button class="icon-btn" id="notificationsBtn" aria-label="Notifications">
+          <i class="fas fa-bell"></i>
+          <span class="badge">3</span>
+        </button>
 
-    <button class="icon-btn" id="logoutBtn" title="Log out">
-      <i class="fas fa-right-from-bracket"></i>
-    </button>
+        <button class="icon-btn" id="educationBtn" aria-label="Education Center">
+          <i class="fas fa-graduation-cap"></i>
+        </button>
+
+        <button class="icon-btn" id="logoutBtn" title="Log out" aria-label="Log out">
+          <i class="fas fa-right-from-bracket"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="main-content" id="mainContent">
+
+      <!-- HOME SCREEN -->
+      <div class="screen-content active" id="homeScreen">
+
+        <div class="stats-row">
+          <div class="stat-card">
+            <span class="stat-label">Started Case</span>
+            <div class="stat-number">14d</div>
+            <span class="stat-subtext">ago</span>
+          </div>
+
+          <div class="stat-card">
+            <span class="stat-label">Stages Done</span>
+            <div class="stat-number">2</div>
+            <span class="stat-subtext">of 9</span>
+          </div>
+
+          <div class="stat-card">
+            <span class="stat-label">Stages Missing</span>
+            <div class="stat-number">7</div>
+            <span class="stat-subtext">to send case</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <h3 class="section-title">Your Case Progress</h3>
+          <div class="progress-tracker" id="progressTracker"></div>
+
+          <div class="stage-description" id="stageDescription" style="display:none;">
+            <div class="stage-desc-card">
+              <button class="close-btn" id="closeDescBtn">×</button>
+              <div class="stage-abbrev-badge" id="stageAbbrev">K</div>
+              <h4 id="stageFullName">Signed Contract</h4>
+              <p id="stageDescText">The initial agreement between you and Honest Immigration.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="current-stage-card">
+            <div class="stage-header">
+              <span class="stage-tag current">Current Stage</span>
+              <span class="stage-name">Documentation Uploaded</span>
+            </div>
+
+            <p class="stage-detail">
+              We're gathering all required materials for your T Visa or VAWA petition
+            </p>
+
+            <div class="responsibility-row">
+              <div class="responsibility-item">
+                <span class="responsibility-icon">👤</span>
+                <span>You: 2 items pending</span>
+              </div>
+
+              <div class="responsibility-item">
+                <span class="responsibility-icon">🏢</span>
+                <span>Honest Immigration: Reviewing documents</span>
+              </div>
+            </div>
+
+            <div class="timeline-note">
+              <i class="fas fa-info-circle"></i>
+              All clients must submit Passport and Birth Certificate to start their case.
+              The rest of the documentation must typically take between 7-14 days to upload.
+              If you have a particular situation, please contact us.
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="action-card urgent">
+            <div class="action-header">
+              <i class="fas fa-exclamation-triangle"></i>
+              <h4>Upload Passport Copy</h4>
+            </div>
+
+            <p class="action-detail">Required to proceed to next stage</p>
+
+            <div class="action-footer">
+              <span class="due-date">Due in 3 days</span>
+              <button class="btn-primary">
+                <i class="fas fa-upload"></i> Upload Now
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="next-stage-card">
+            <h4>Next: Introductory Call</h4>
+            <p>Your case manager will schedule a call to discuss your application strategy.</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- OTHER SCREENS -->
+      <div class="screen-content" id="tasksScreen"></div>
+      <div class="screen-content" id="documentsScreen"></div>
+      <div class="screen-content" id="updatesScreen"></div>
+      <div class="screen-content" id="educationScreen"></div>
+
+    </main>
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="bottom-nav">
+      <button class="nav-btn active" data-screen="home">
+        <i class="fas fa-home"></i><span>Home</span>
+      </button>
+
+      <button class="nav-btn" data-screen="tasks">
+        <i class="fas fa-tasks"></i><span>Tasks</span>
+      </button>
+
+      <button class="nav-btn" data-screen="documents">
+        <i class="fas fa-file-alt"></i><span>Documents</span>
+      </button>
+
+      <button class="nav-btn" data-screen="updates">
+        <i class="fas fa-bell"></i><span>Updates</span>
+      </button>
+    </nav>
   </div>
-</header>
+
+  <!-- JavaScript Files -->
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
+
 
