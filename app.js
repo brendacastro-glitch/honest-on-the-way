@@ -46,14 +46,39 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    function handleLogin() {
-        const caseNumber = document.getElementById('caseNumber').value;
-        const pin = document.getElementById('pin').value;
-        
-        // Basic validation
-        if (!caseNumber || !pin) {
-            alert('Please enter your case number and PIN');
-            return;
+    functionasync function handleLogin() {
+  const caseNumber = document.getElementById('caseNumber').value.trim();
+  const pin = document.getElementById('pin').value.trim();
+
+  if (!caseNumber || !pin) {
+    alert('Please enter your case number and PIN');
+    return;
+  }
+
+  const supabase = window.supabase.createClient(
+    window.APP_CONFIG.supabase.url,
+    window.APP_CONFIG.supabase.anonKey
+  );
+
+  const { data, error } = await supabase
+    .from('case_logins')
+    .select('*')
+    .eq('case_ref', caseNumber)
+    .eq('pin', pin)
+    .single();
+
+  if (error || !data) {
+    alert('Invalid case number or PIN');
+    return;
+  }
+
+  localStorage.setItem('honest_immigration_logged_in', 'true');
+  localStorage.setItem('honest_immigration_case', caseNumber);
+  localStorage.setItem('honest_immigration_client_id', data.client_id);
+
+  showAppScreen();
+}
+
         }
         
         // In a real app, this would call your API/Supabase
