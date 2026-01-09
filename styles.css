@@ -1368,17 +1368,19 @@ body {
 .expanding {
     animation: expandStage 0.3s ease;
 }
+/* FORCE LOGOUT BUTTON VISIBILITY */
 #logoutBtn {
   display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-width: 70px !important;
-  height: 40px !important;
-  border: 1px solid #1e3a8a !important;
-  padding: 0 10px !important;
-  border-radius: 10px !important;
-  background: white !important;
-  color: #1e3a8a !important;
-  font-weight: 600 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 9999 !important;
+  margin-left: 10px !important;
+  padding: 8px 12px !important;
+  border: 2px solid red !important;
+  background: yellow !important;
+  color: black !important;
+  font-weight: 700 !important;
 }
+
 
