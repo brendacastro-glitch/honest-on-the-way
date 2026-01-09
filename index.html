@@ -13,6 +13,7 @@
 </head>
 
 <body>
+
   <!-- LOGIN SCREEN -->
   <div class="screen" id="loginScreen">
     <div class="login-container">
@@ -55,9 +56,9 @@
     </div>
   </div>
 
-  <!-- MAIN APP (Hidden until login) -->
+  <!-- MAIN APP -->
   <div class="screen" id="appScreen" style="display:none;">
-    
+
     <!-- TOP NAVIGATION -->
     <header class="app-header">
       <div class="header-left">
@@ -71,7 +72,7 @@
       <div class="header-right">
         <button class="icon-btn" id="notificationsBtn" aria-label="Notifications">
           <i class="fas fa-bell"></i>
-          <span class="badge">3</span>
+          <span class="badge" id="notifBadge">3</span>
         </button>
 
         <button class="icon-btn" id="educationBtn" aria-label="Education Center">
@@ -84,11 +85,12 @@
       </div>
     </header>
 
-    <!-- MAIN CONTENT AREA -->
+    <!-- MAIN CONTENT -->
     <main class="main-content" id="mainContent">
 
-      <!-- HOME SCREEN -->
+      <!-- HOME -->
       <div class="screen-content active" id="homeScreen">
+
         <div class="stats-row">
           <div class="stat-card">
             <span class="stat-label">Started Case</span>
@@ -111,47 +113,8 @@
 
         <div class="section">
           <h3 class="section-title">Your Case Progress</h3>
-          <div class="progress-tracker" id="progressTracker"></div>
-
-          <div class="stage-description" id="stageDescription" style="display:none;">
-            <div class="stage-desc-card">
-              <button class="close-btn" id="closeDescBtn">×</button>
-              <div class="stage-abbrev-badge" id="stageAbbrev">K</div>
-              <h4 id="stageFullName">Signed Contract</h4>
-              <p id="stageDescText">The initial agreement between you and Honest Immigration.</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="section">
-          <div class="current-stage-card">
-            <div class="stage-header">
-              <span class="stage-tag current">Current Stage</span>
-              <span class="stage-name">Documentation Uploaded</span>
-            </div>
-
-            <p class="stage-detail">
-              We're gathering all required materials for your T Visa or VAWA petition
-            </p>
-
-            <div class="responsibility-row">
-              <div class="responsibility-item">
-                <span class="responsibility-icon">👤</span>
-                <span>You: 2 items pending</span>
-              </div>
-
-              <div class="responsibility-item">
-                <span class="responsibility-icon">🏢</span>
-                <span>Honest Immigration: Reviewing documents</span>
-              </div>
-            </div>
-
-            <div class="timeline-note">
-              <i class="fas fa-info-circle"></i>
-              All clients must submit Passport and Birth Certificate to start their case.
-              The rest of the documentation must typically take between 7-14 days to upload.
-              If you have a particular situation, please contact us.
-            </div>
+          <div class="progress-tracker">
+            <p class="empty-text">Progress tracker placeholder (coming next).</p>
           </div>
         </div>
 
@@ -161,176 +124,147 @@
               <i class="fas fa-exclamation-triangle"></i>
               <h4>Upload Passport Copy</h4>
             </div>
-
             <p class="action-detail">Required to proceed to next stage</p>
 
             <div class="action-footer">
               <span class="due-date">Due in 3 days</span>
-              <button class="btn-primary" id="uploadNowBtn">
+              <button class="btn-primary" id="uploadPassportBtn">
                 <i class="fas fa-upload"></i> Upload Now
               </button>
             </div>
           </div>
         </div>
 
-        <div class="section">
-          <div class="next-stage-card">
-            <h4>Next: Introductory Call</h4>
-            <p>Your case manager will schedule a call to discuss your application strategy.</p>
-          </div>
-        </div>
       </div>
 
-      <!-- TASKS SCREEN -->
+      <!-- TASKS -->
       <div class="screen-content" id="tasksScreen">
-        <div class="section">
-          <h3 class="section-title">Your Tasks</h3>
+        <h3 class="section-title">Your Tasks</h3>
 
-          <div class="task-list" id="taskList">
-            <!-- Demo tasks injected in JS -->
+        <div class="task-list">
+          <div class="task-card">
+            <div class="task-header">
+              <div class="task-info">
+                <div class="task-icon"><i class="fas fa-file-upload"></i></div>
+                <div class="task-details">
+                  <h4>Upload Birth Certificate</h4>
+                  <div class="task-meta">
+                    <span class="status-badge pending">Pending</span>
+                    <span class="due-date">Due in 7 days</span>
+                  </div>
+                </div>
+              </div>
+              <button class="btn-secondary small">Upload</button>
+            </div>
+          </div>
+
+          <div class="task-card">
+            <div class="task-header">
+              <div class="task-info">
+                <div class="task-icon"><i class="fas fa-calendar-check"></i></div>
+                <div class="task-details">
+                  <h4>Schedule Intro Call</h4>
+                  <div class="task-meta">
+                    <span class="status-badge submitted">Submitted</span>
+                    <span class="due-date">Waiting for confirmation</span>
+                  </div>
+                </div>
+              </div>
+              <span class="task-status"><i class="fas fa-check-circle"></i></span>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- DOCUMENTS SCREEN -->
+      <!-- DOCUMENTS -->
       <div class="screen-content" id="documentsScreen">
-        <div class="section">
-          <h3 class="section-title">Documents</h3>
+        <h3 class="section-title">Your Documents</h3>
 
-          <div class="upload-guide">
-            <h4>How to upload faster</h4>
-            <ul class="upload-tips">
-              <li><i class="fas fa-check-circle"></i> Take clear photos</li>
-              <li><i class="fas fa-check-circle"></i> Avoid shadows</li>
-              <li><i class="fas fa-check-circle"></i> Upload one document per file</li>
-            </ul>
+        <div class="upload-guide">
+          <h4>What to upload first</h4>
+          <ul class="upload-tips">
+            <li><i class="fas fa-check-circle"></i> Passport copy</li>
+            <li><i class="fas fa-check-circle"></i> Birth certificate</li>
+            <li><i class="fas fa-check-circle"></i> Any police reports</li>
+          </ul>
+        </div>
+
+        <div class="pending-docs">
+          <h4>Required</h4>
+          <div class="doc-item">
+            <i class="fas fa-passport"></i>
+            <div class="doc-info">
+              <h5>Passport Copy</h5>
+              <p>Required to proceed</p>
+            </div>
+            <span class="doc-status required">Required</span>
           </div>
 
-          <div class="document-actions">
-            <button class="document-action-btn" id="takePhotoBtn">
-              <i class="fas fa-camera"></i>
-              Take Photo
-            </button>
-            <button class="document-action-btn" id="uploadFileBtn">
-              <i class="fas fa-file-upload"></i>
-              Upload File
-            </button>
-          </div>
-
-          <div class="pending-docs">
-            <h4>Pending Documents</h4>
-
-            <div class="doc-item">
-              <i class="fas fa-id-card"></i>
-              <div class="doc-info">
-                <h5>Passport Copy</h5>
-                <p>Required</p>
-              </div>
-              <span class="doc-status required">Required</span>
+          <div class="doc-item">
+            <i class="fas fa-id-card"></i>
+            <div class="doc-info">
+              <h5>Birth Certificate</h5>
+              <p>Required to proceed</p>
             </div>
-
-            <div class="doc-item">
-              <i class="fas fa-file-medical"></i>
-              <div class="doc-info">
-                <h5>Police Report</h5>
-                <p>Optional / If available</p>
-              </div>
-              <span class="doc-status reviewing">Optional</span>
-            </div>
-
-            <div class="doc-item">
-              <i class="fas fa-certificate"></i>
-              <div class="doc-info">
-                <h5>Birth Certificate</h5>
-                <p>Required</p>
-              </div>
-              <span class="doc-status required">Required</span>
-            </div>
+            <span class="doc-status required">Required</span>
           </div>
         </div>
       </div>
 
-      <!-- UPDATES SCREEN -->
+      <!-- UPDATES -->
       <div class="screen-content" id="updatesScreen">
-        <div class="section">
-          <h3 class="section-title">Updates</h3>
+        <h3 class="section-title">Updates</h3>
 
-          <div class="messages-list">
-            <div class="message-card update">
-              <div class="message-icon"><i class="fas fa-info-circle"></i></div>
-              <div class="message-content">
-                <div class="message-header">
-                  <h4>Your documents are being reviewed</h4>
-                  <span class="message-time">2h ago</span>
-                </div>
-                <p>We received your submission. We’ll let you know if anything is missing.</p>
+        <div class="messages-list">
+          <div class="message-card update">
+            <div class="message-icon"><i class="fas fa-bell"></i></div>
+            <div class="message-content">
+              <div class="message-header">
+                <h4>Your case has moved forward</h4>
+                <span class="message-time">Today</span>
               </div>
+              <p>We received your initial information. Next step: documentation upload.</p>
             </div>
+          </div>
 
-            <div class="message-card request">
-              <div class="message-icon"><i class="fas fa-exclamation-triangle"></i></div>
-              <div class="message-content">
-                <div class="message-header">
-                  <h4>Upload Passport Copy</h4>
-                  <span class="message-time">1d ago</span>
-                </div>
-                <p>Please upload a clear copy of your passport to move to the next stage.</p>
+          <div class="message-card request">
+            <div class="message-icon"><i class="fas fa-file-upload"></i></div>
+            <div class="message-content">
+              <div class="message-header">
+                <h4>Upload Passport Copy</h4>
+                <span class="message-time">2 days ago</span>
               </div>
-            </div>
-
-            <div class="message-card confirmation">
-              <div class="message-icon"><i class="fas fa-check-circle"></i></div>
-              <div class="message-content">
-                <div class="message-header">
-                  <h4>We scheduled your intro call</h4>
-                  <span class="message-time">3d ago</span>
-                </div>
-                <p>Your case manager will contact you soon with details.</p>
-              </div>
+              <p>Please upload a clear photo or scan of your passport to continue.</p>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- EDUCATION SCREEN -->
+      <!-- EDUCATION -->
       <div class="screen-content" id="educationScreen">
-        <div class="section">
-          <h3 class="section-title">Education Center</h3>
+        <h3 class="section-title">Education Center</h3>
 
-          <div class="education-cards">
-            <div class="edu-card">
-              <div class="edu-thumbnail"><i class="fas fa-video"></i></div>
-              <div class="edu-content">
-                <h4>What is a T-Visa?</h4>
-                <p>Learn what a T-Visa is and how it protects trafficking survivors.</p>
-                <div class="edu-meta">
-                  <span class="video-duration">4 min</span>
-                  <span class="edu-category">Basics</span>
-                </div>
+        <div class="education-cards">
+          <div class="edu-card">
+            <div class="edu-thumbnail"><i class="fas fa-play"></i></div>
+            <div class="edu-content">
+              <h4>What is a T Visa?</h4>
+              <p>Learn the basics about eligibility and what the process looks like.</p>
+              <div class="edu-meta">
+                <span class="video-duration">4 min</span>
+                <span class="edu-category">Basics</span>
               </div>
             </div>
+          </div>
 
-            <div class="edu-card">
-              <div class="edu-thumbnail"><i class="fas fa-video"></i></div>
-              <div class="edu-content">
-                <h4>How to upload documents correctly</h4>
-                <p>Tips to avoid delays when uploading photos or scans.</p>
-                <div class="edu-meta">
-                  <span class="video-duration">3 min</span>
-                  <span class="edu-category">Documents</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="edu-card">
-              <div class="edu-thumbnail"><i class="fas fa-video"></i></div>
-              <div class="edu-content">
-                <h4>What to expect after submission</h4>
-                <p>Timeline and stages after you submit required documents.</p>
-                <div class="edu-meta">
-                  <span class="video-duration">5 min</span>
-                  <span class="edu-category">Process</span>
-                </div>
+          <div class="edu-card">
+            <div class="edu-thumbnail"><i class="fas fa-play"></i></div>
+            <div class="edu-content">
+              <h4>How to upload documents correctly</h4>
+              <p>Tips to avoid delays (lighting, file type, and what to include).</p>
+              <div class="edu-meta">
+                <span class="video-duration">3 min</span>
+                <span class="edu-category">Documents</span>
               </div>
             </div>
           </div>
@@ -359,7 +293,7 @@
     </nav>
   </div>
 
-  <!-- JavaScript Files -->
+  <!-- JS -->
   <script src="config.js"></script>
   <script src="app.js"></script>
 </body>
