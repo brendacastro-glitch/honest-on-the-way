@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
       caseDisplay.textContent = `Case: ${caseNumber}`;
     }
 
-    // ✅ IMPORTANT: Bind buttons ONLY after appScreen is visible
+    // ✅ Bind buttons after appScreen shows
     bindAppButtons();
   }
 
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ----------------------
-  // SHOW SECTION CONTENT (Basic navigation)
+  // SHOW SECTION CONTENT
   // ----------------------
   function showSection(sectionId) {
     const allSections = document.querySelectorAll('.screen-content');
@@ -47,83 +47,46 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------
   // BIND ALL APP BUTTONS ✅
   // ----------------------
-function bindAppButtons() {
-  console.log("✅ Binding app buttons...");
+  function bindAppButtons() {
+    console.log("✅ Binding app buttons...");
 
-  // ✅ Top buttons
-  const notificationsBtn = document.getElementById("notificationsBtn");
-  const educationBtn = document.getElementById("educationBtn");
+    // ✅ Top buttons
+    const notificationsBtn = document.getElementById("notificationsBtn");
+    const educationBtn = document.getElementById("educationBtn");
 
-  if (notificationsBtn) {
-    notificationsBtn.onclick = () => {
-      console.log("🔔 Notifications clicked");
-      alert("Notifications clicked (demo)");
-    };
-  }
-
-  if (educationBtn) {
-    educationBtn.onclick = () => {
-      console.log("🎓 Education clicked");
-      showSection("educationScreen");
-    };
-  }
-
-  // ✅ Bottom nav buttons using data-screen
-  const navButtons = document.querySelectorAll(".nav-btn");
-
-  navButtons.forEach(btn => {
-    btn.onclick = () => {
-      const screen = btn.getAttribute("data-screen");
-      console.log("➡️ NAV clicked:", screen);
-
-      // Remove active class from all
-      navButtons.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-
-      // Show correct screen
-      if (screen === "home") showSection("homeScreen");
-      if (screen === "tasks") showSection("tasksScreen");
-      if (screen === "documents") showSection("documentsScreen");
-      if (screen === "updates") showSection("updatesScreen");
-    };
-}
-
+    if (notificationsBtn) {
+      notificationsBtn.onclick = () => {
+        console.log("🔔 Notifications clicked");
+        alert("Notifications clicked (demo)");
+      };
     }
 
     if (educationBtn) {
       educationBtn.onclick = () => {
         console.log("🎓 Education clicked");
-        alert("Education clicked (demo)");
+        showSection("educationScreen");
       };
     }
 
-    if (homeBtn) {
-      homeBtn.onclick = () => {
-        console.log("🏠 Home clicked");
-        showSection("homeScreen");
-      };
-    }
+    // ✅ Bottom nav buttons (data-screen)
+    const navButtons = document.querySelectorAll(".nav-btn");
 
-    if (tasksBtn) {
-      tasksBtn.onclick = () => {
-        console.log("✅ Tasks clicked");
-        showSection("tasksScreen");
-      };
-    }
+    navButtons.forEach(btn => {
+      btn.onclick = () => {
+        const screen = btn.getAttribute("data-screen");
+        console.log("➡️ NAV clicked:", screen);
 
-    if (documentsBtn) {
-      documentsBtn.onclick = () => {
-        console.log("📄 Documents clicked");
-        showSection("documentsScreen");
-      };
-    }
+        // Remove active class from all
+        navButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
 
-    if (updatesBtn) {
-      updatesBtn.onclick = () => {
-        console.log("📣 Updates clicked");
-        showSection("messagesScreen");
+        // Show correct section
+        if (screen === "home") showSection("homeScreen");
+        if (screen === "tasks") showSection("tasksScreen");
+        if (screen === "documents") showSection("documentsScreen");
+        if (screen === "updates") showSection("updatesScreen");
       };
-    }
+    });
   }
 
   // ----------------------
