@@ -13,9 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('appScreen').style.display = 'flex';
 
-    // Update header case number if element exists
     const caseNumber = localStorage.getItem('honest_immigration_case') || '';
     const caseDisplay = document.querySelector('.user-info p');
+
     if (caseDisplay && caseNumber) {
       caseDisplay.textContent = `Case: ${caseNumber}`;
     }
@@ -80,13 +80,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ----------------------
+  // LOGOUT ✅
+  // ----------------------
+  function handleLogout() {
+    localStorage.removeItem('honest_immigration_logged_in');
+    localStorage.removeItem('honest_immigration_case');
+    localStorage.removeItem('honest_immigration_client_id');
+    showLoginScreen();
+  }
+
+  // ----------------------
   // EVENT LISTENERS
   // ----------------------
   const loginBtn = document.getElementById('loginBtn');
   const magicBtn = document.getElementById('magicLinkBtn');
+  const logoutBtn = document.getElementById('logoutBtn');
 
   if (loginBtn) loginBtn.addEventListener('click', handleLogin);
   if (magicBtn) magicBtn.addEventListener('click', handleMagicLink);
+  if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
 
   // ----------------------
   // INIT
