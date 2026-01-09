@@ -467,3 +467,8 @@ button:active, .nav-btn:active, .icon-btn:active {
         gap: var(--spacing-sm);
     }
 }
+.empty-text {
+  color: var(--gray-text);
+  font-size: 14px;
+}
+
