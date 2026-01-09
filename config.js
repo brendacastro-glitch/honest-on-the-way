@@ -1,40 +1,6 @@
-const SUPABASE_CONFIG = {
-    url: 'https://YOUR_PROJECT_ID.supabase.co',
-    anonKey: 'YOUR_ANON_KEY'
-};
-
-// App Configuration
-const APP_CONFIG = {
-    appName: 'Honest Immigration Client Portal',
-    version: '1.0.0',
-    supportEmail: 'support@honestimigration.com',
-    supportPhone: '+1 (555) 123-4567'
-};
-
-// API Endpoints (for future integration)
-const API_ENDPOINTS = {
-    login: '/api/auth/login',
-    getCase: '/api/cases/current',
-    uploadDocument: '/api/documents/upload',
-    getTasks: '/api/tasks',
-    getMessages: '/api/messages'
-};
-
-// Feature Flags
-const FEATURES = {
-    enableMagicLink: true,
-    enableBiometrics: false,
-    enableVideoCalls: false,
-    enablePushNotifications: true
-};
-
-// Export configuration
 window.APP_CONFIG = {
-    supabase: SUPABASE_CONFIG,
-    app: APP_CONFIG,
-    api: API_ENDPOINTS,
-    features: FEATURES
+  supabase: {
+    url: "https://qdvhobijcfbhnfzxpvlq.supabase.co",
+    anonKey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFkdmhvYmlqY2ZiaG5menhwdmxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2OTU0MzUsImV4cCI6MjA4MzI3MTQzNX0.qZA2_a7PdVpRxJJLoG5UKnnL3POcAT4Zy7BsPmCwvLc"
+  }
 };
-
-console.log(`${APP_CONFIG.appName} v${APP_CONFIG.version} configured.`);
-
