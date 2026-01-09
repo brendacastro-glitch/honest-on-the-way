@@ -19,6 +19,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (caseDisplay && caseNumber) {
       caseDisplay.textContent = `Case: ${caseNumber}`;
     }
+
+    // ✅ IMPORTANT: Bind buttons ONLY after appScreen is visible
+    bindAppButtons();
   }
 
   function checkLoginStatus() {
@@ -28,6 +31,87 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
       showLoginScreen();
     }
+  }
+
+  // ----------------------
+  // SHOW SECTION CONTENT (Basic navigation)
+  // ----------------------
+  function showSection(sectionId) {
+    const allSections = document.querySelectorAll('.screen-content');
+    allSections.forEach(section => section.classList.remove('active'));
+
+    const target = document.getElementById(sectionId);
+    if (target) target.classList.add('active');
+  }
+
+  // ----------------------
+  // BIND ALL APP BUTTONS ✅
+  // ----------------------
+  function bindAppButtons() {
+    console.log("✅ Binding app buttons...");
+
+    const notificationsBtn = document.getElementById("notificationsBtn");
+    const educationBtn = document.getElementById("educationBtn");
+
+    const homeBtn = document.getElementById("homeBtn");
+    const tasksBtn = document.getElementById("tasksBtn");
+    const documentsBtn = document.getElementById("documentsBtn");
+    const updatesBtn = document.getElementById("updatesBtn");
+
+    if (notificationsBtn) {
+      notificationsBtn.onclick = () => {
+        console.log("🔔 Notifications clicked");
+        alert("Notifications clicked (demo)");
+      };
+    }
+
+    if (educationBtn) {
+      educationBtn.onclick = () => {
+        console.log("🎓 Education clicked");
+        alert("Education clicked (demo)");
+      };
+    }
+
+    if (homeBtn) {
+      homeBtn.onclick = () => {
+        console.log("🏠 Home clicked");
+        showSection("homeScreen");
+      };
+    }
+
+    if (tasksBtn) {
+      tasksBtn.onclick = () => {
+        console.log("✅ Tasks clicked");
+        showSection("tasksScreen");
+      };
+    }
+
+    if (documentsBtn) {
+      documentsBtn.onclick = () => {
+        console.log("📄 Documents clicked");
+        showSection("documentsScreen");
+      };
+    }
+
+    if (updatesBtn) {
+      updatesBtn.onclick = () => {
+        console.log("📣 Updates clicked");
+        showSection("messagesScreen");
+      };
+    }
+  }
+
+  // ----------------------
+  // SUPABASE CLIENT (singleton ✅)
+  // ----------------------
+  function getSupabaseClient() {
+    if (!window._supabaseClient) {
+      window._supabaseClient = window.supabase.createClient(
+        window.APP_CONFIG.supabase.url,
+        window.APP_CONFIG.supabase.anonKey
+      );
+    }
+    return window._supabaseClient;
   }
 
   // ----------------------
@@ -50,10 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const supabase = window.supabase.createClient(
-      window.APP_CONFIG.supabase.url,
-      window.APP_CONFIG.supabase.anonKey
-    );
+    const supabase = getSupabaseClient();
 
     const { data, error } = await supabase
       .from('case_logins')
