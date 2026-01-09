@@ -1368,5 +1368,13 @@ body {
 .expanding {
     animation: expandStage 0.3s ease;
 }
+#logoutBtn i {
+  font-size: 18px;
+  color: var(--gray-text);
+}
+
+#logoutBtn:hover i {
+  color: var(--primary-blue);
+}
 
 
