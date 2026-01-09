@@ -2,416 +2,65 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log("APP.JS LOADED ✅");
 
   // ----------------------
-  // HELPERS: Screens
+  // Screen helpers
   // ----------------------
+  const loginScreen = document.getElementById('loginScreen');
+  const appScreen = document.getElementById('appScreen');
+
   function showLoginScreen() {
-    document.getElementById('loginScreen').style.display = 'flex';
-    document.getElementById('appScreen').style.display = 'none';
+    loginScreen.style.display = 'block';
+    appScreen.style.display = 'none';
   }
 
   function showAppScreen() {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('appScreen').style.display = 'flex';
+    loginScreen.style.display = 'none';
+    appScreen.style.display = 'block';
 
+    // Update case in header
     const caseNumber = localStorage.getItem('honest_immigration_case') || '';
     const caseDisplay = document.getElementById('caseDisplay');
+    if (caseDisplay && caseNumber) caseDisplay.textContent = `Case: ${caseNumber}`;
 
-    if (caseDisplay && caseNumber) {
-      caseDisplay.textContent = `Case: ${caseNumber}`;
-    }
-
-    // ✅ Bind buttons + render demo content
-    bindAppButtons();
-    seedDemoContent();
+    // Bind app interactions + render demo UI
+    bindAppButtonsOnce();
+    renderProgress();
   }
 
   function checkLoginStatus() {
     const isLoggedIn = localStorage.getItem('honest_immigration_logged_in') === 'true';
-    if (isLoggedIn) showAppScreen();
-    else showLoginScreen();
+    isLoggedIn ? showAppScreen() : showLoginScreen();
   }
 
   // ----------------------
-  // SHOW SECTION CONTENT
+  // Navigation (sections)
   // ----------------------
   function showSection(sectionId) {
-    const allSections = document.querySelectorAll('.screen-content');
-    allSections.forEach(section => section.classList.remove('active'));
-
+    document.querySelectorAll('.screen-content').forEach(s => s.classList.remove('active'));
     const target = document.getElementById(sectionId);
     if (target) target.classList.add('active');
   }
 
-  // ----------------------
-  // UI: Render helpers
-  // ----------------------
-  function el(tag, className, html) {
-    const node = document.createElement(tag);
-    if (className) node.className = className;
-    if (html !== undefined) node.innerHTML = html;
-    return node;
+  function setBottomNavActive(screenKey) {
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+    const active = document.querySelector(`.nav-btn[data-screen="${screenKey}"]`);
+    if (active) active.classList.add('active');
   }
 
-  function renderTasks(tasks, mountId) {
-    const mount = document.getElementById(mountId);
-    if (!mount) return;
-    mount.innerHTML = "";
-
-    tasks.forEach(t => {
-      const card = el('div', `task-card ${t.status === 'approved' ? 'completed' : ''}`);
-      card.setAttribute('data-expanded', 'false');
-
-      const header = el('div', 'task-header');
-      const info = el('div', 'task-info');
-
-      const icon = el('div', 'task-icon', `<i class="${t.icon}"></i>`);
-      const details = el('div', 'task-details');
-      details.appendChild(el('h4', '', t.title));
-
-      const meta = el('div', 'task-meta');
-      meta.appendChild(el('span', `status-badge ${t.status}`, t.statusLabel));
-      meta.appendChild(el('span', 'due-date', t.due));
-
-      details.appendChild(meta);
-
-      info.appendChild(icon);
-      info.appendChild(details);
-
-      const right = el('div', '');
-      const expandBtn = el('button', 'expand-btn', `<i class="fas fa-chevron-down"></i>`);
-      expandBtn.type = "button";
-
-      const statusIcon = el('div', 'task-status', t.status === 'approved' ? `<i class="fas fa-check-circle"></i>` : '');
-      right.appendChild(expandBtn);
-      if (t.status === 'approved') right.appendChild(statusIcon);
-
-      header.appendChild(info);
-      header.appendChild(right);
-
-      const expansion = el('div', 'task-expansion');
-      const expansionContent = el('div', 'expansion-content');
-      expansionContent.appendChild(el('h5', '', 'What you need to do'));
-      expansionContent.appendChild(el('p', '', t.description));
-      const actionBtn = el('button', 'btn-secondary small', `<i class="fas fa-arrow-right"></i> ${t.actionText}`);
-      actionBtn.type = "button";
-      actionBtn.addEventListener('click', () => alert(`Demo: ${t.actionText}`));
-      expansionContent.appendChild(actionBtn);
-
-      const review = el('div', 'review-status', `<i class="fas fa-info-circle"></i> ${t.reviewNote}`);
-      expansionContent.appendChild(review);
-
-      expansion.appendChild(expansionContent);
-
-      expandBtn.addEventListener('click', () => {
-        const expanded = card.getAttribute('data-expanded') === 'true';
-        card.setAttribute('data-expanded', expanded ? 'false' : 'true');
-      });
-
-      card.appendChild(header);
-      card.appendChild(expansion);
-      mount.appendChild(card);
-    });
-  }
-
-  function renderMessages(messages) {
-    const mount = document.getElementById('messagesList');
-    if (!mount) return;
-    mount.innerHTML = "";
-
-    messages.forEach(m => {
-      const card = el('div', `message-card ${m.type}`);
-      const icon = el('div', 'message-icon', `<i class="${m.icon}"></i>`);
-      const content = el('div', 'message-content');
-      const header = el('div', 'message-header');
-      header.appendChild(el('h4', '', m.title));
-      header.appendChild(el('span', 'message-time', m.time));
-      content.appendChild(header);
-      content.appendChild(el('p', '', m.body));
-      card.appendChild(icon);
-      card.appendChild(content);
-      mount.appendChild(card);
-    });
-  }
-
-  function renderEducation(items) {
-    const mount = document.getElementById('educationCards');
-    if (!mount) return;
-    mount.innerHTML = "";
-
-    items.forEach(v => {
-      const card = el('div', 'edu-card');
-      card.setAttribute('data-edu', v.category);
-
-      const thumb = el('div', 'edu-thumbnail', `<i class="${v.icon}"></i>`);
-      const content = el('div', 'edu-content');
-      content.appendChild(el('h4', '', v.title));
-      content.appendChild(el('p', '', v.body));
-
-      const meta = el('div', 'edu-meta');
-      meta.appendChild(el('span', 'video-duration', v.duration));
-      meta.appendChild(el('span', 'edu-category', v.label));
-      content.appendChild(meta);
-
-      card.appendChild(thumb);
-      card.appendChild(content);
-
-      card.addEventListener('click', () => alert(`Demo: Open "${v.title}"`));
-      mount.appendChild(card);
-    });
+  function screenKeyToSectionId(key) {
+    if (key === 'home') return 'homeScreen';
+    if (key === 'tasks') return 'tasksScreen';
+    if (key === 'documents') return 'documentsScreen';
+    if (key === 'updates') return 'updatesScreen';
+    return 'homeScreen';
   }
 
   // ----------------------
-  // BIND ALL APP BUTTONS ✅
-  // ----------------------
-  function bindAppButtons() {
-    console.log("✅ Binding app buttons...");
-
-    // Top buttons
-    const notificationsBtn = document.getElementById("notificationsBtn");
-    const educationBtn = document.getElementById("educationBtn");
-    const uploadPassportBtn = document.getElementById("uploadPassportBtn");
-    const uploadDocBtn = document.getElementById("uploadDocBtn");
-    const scanDocBtn = document.getElementById("scanDocBtn");
-
-    if (notificationsBtn) {
-      notificationsBtn.onclick = () => {
-        console.log("🔔 Notifications clicked");
-        // Go to Updates screen
-        setBottomNavActive('updates');
-        showSection("updatesScreen");
-      };
-    }
-
-    if (educationBtn) {
-      educationBtn.onclick = () => {
-        console.log("🎓 Education clicked");
-        showSection("educationScreen");
-      };
-    }
-
-    if (uploadPassportBtn) {
-      uploadPassportBtn.onclick = () => alert("Demo: Upload flow not implemented yet.");
-    }
-
-    if (uploadDocBtn) {
-      uploadDocBtn.onclick = () => alert("Demo: Document upload not implemented yet.");
-    }
-
-    if (scanDocBtn) {
-      scanDocBtn.onclick = () => alert("Demo: Camera scan not implemented yet.");
-    }
-
-    // Bottom nav
-    const navButtons = document.querySelectorAll(".nav-btn");
-    navButtons.forEach(btn => {
-      btn.onclick = () => {
-        const screen = btn.getAttribute("data-screen");
-        console.log("➡️ NAV clicked:", screen);
-
-        navButtons.forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-
-        if (screen === "home") showSection("homeScreen");
-        if (screen === "tasks") showSection("tasksScreen");
-        if (screen === "documents") showSection("documentsScreen");
-        if (screen === "updates") showSection("updatesScreen");
-      };
-    });
-
-    // Tasks tabs
-    const tabButtons = document.querySelectorAll(".tab-btn");
-    tabButtons.forEach(t => {
-      t.addEventListener('click', () => {
-        tabButtons.forEach(x => x.classList.remove('active'));
-        t.classList.add('active');
-
-        const tab = t.getAttribute('data-tab');
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        const target = document.getElementById(`tab-${tab}`);
-        if (target) target.classList.add('active');
-      });
-    });
-
-    // Updates filters (simple demo)
-    const filterBtns = document.querySelectorAll("#updatesScreen .filter-btn");
-    filterBtns.forEach(f => {
-      f.addEventListener('click', () => {
-        filterBtns.forEach(x => x.classList.remove('active'));
-        f.classList.add('active');
-
-        const type = f.getAttribute('data-filter');
-        const filtered = type === 'all' ? DEMO.messages : DEMO.messages.filter(m => m.type === type);
-        renderMessages(filtered);
-      });
-    });
-
-    // Education filters (simple demo)
-    const eduBtns = document.querySelectorAll("#educationScreen .filter-btn");
-    eduBtns.forEach(f => {
-      f.addEventListener('click', () => {
-        eduBtns.forEach(x => x.classList.remove('active'));
-        f.classList.add('active');
-
-        const cat = f.getAttribute('data-edu');
-        const filtered = cat === 'all' ? DEMO.education : DEMO.education.filter(v => v.category === cat);
-        renderEducation(filtered);
-      });
-    });
-
-    // Progress stage click (demo)
-    const stages = document.querySelectorAll('.stage-item');
-    const desc = document.getElementById('stageDescription');
-    const close = document.getElementById('closeDescBtn');
-
-    const stageMap = {
-      K: { name: "Signed Contract", text: "Your initial agreement with Honest Immigration." },
-      D: { name: "Documentation Upload", text: "Upload your required documents securely." },
-      C: { name: "Introductory Call", text: "A call to confirm details and next steps." },
-      R: { name: "Attorney Review", text: "Your file is reviewed for completeness and strategy." },
-      S: { name: "Submission", text: "We submit your petition when everything is ready." },
-    };
-
-    stages.forEach(s => {
-      s.addEventListener('click', () => {
-        const key = s.getAttribute('data-stage');
-        const data = stageMap[key];
-        if (!data || !desc) return;
-
-        document.getElementById('stageAbbrev').textContent = key;
-        document.getElementById('stageFullName').textContent = data.name;
-        document.getElementById('stageDescText').textContent = data.text;
-
-        desc.style.display = 'block';
-      });
-    });
-
-    if (close && desc) {
-      close.addEventListener('click', () => {
-        desc.style.display = 'none';
-      });
-    }
-  }
-
-  function setBottomNavActive(screen) {
-    document.querySelectorAll('.nav-btn').forEach(b => {
-      const s = b.getAttribute('data-screen');
-      b.classList.toggle('active', s === screen);
-    });
-  }
-
-  // ----------------------
-  // DEMO CONTENT (so screens are NOT empty)
-  // ----------------------
-  const DEMO = {
-    tasksPending: [
-      {
-        title: "Upload Passport Copy",
-        status: "pending",
-        statusLabel: "Pending",
-        due: "Due in 3 days",
-        icon: "fas fa-passport",
-        description: "Upload a clear photo of your passport photo page (front).",
-        actionText: "Upload Passport",
-        reviewNote: "We review within 24–48 hours."
-      },
-      {
-        title: "Confirm Address",
-        status: "pending",
-        statusLabel: "Pending",
-        due: "Due in 7 days",
-        icon: "fas fa-house",
-        description: "Confirm your current address for mailing notices.",
-        actionText: "Confirm Address",
-        reviewNote: "We may request proof of address."
-      }
-    ],
-    tasksSubmitted: [
-      {
-        title: "Birth Certificate Uploaded",
-        status: "submitted",
-        statusLabel: "Submitted",
-        due: "Submitted yesterday",
-        icon: "fas fa-file-alt",
-        description: "We received your birth certificate. If something is missing, we’ll message you.",
-        actionText: "View Status",
-        reviewNote: "Currently under review."
-      }
-    ],
-    tasksApproved: [
-      {
-        title: "Proof of Address Approved",
-        status: "approved",
-        statusLabel: "Approved",
-        due: "Approved",
-        icon: "fas fa-check",
-        description: "Your proof of address looks good and is accepted into your file.",
-        actionText: "View Document",
-        reviewNote: "No action needed."
-      }
-    ],
-    messages: [
-      {
-        type: "request",
-        icon: "fas fa-exclamation-triangle",
-        title: "Action Required: Upload Passport",
-        time: "Today",
-        body: "Please upload your passport photo page so we can proceed to the next stage."
-      },
-      {
-        type: "update",
-        icon: "fas fa-info-circle",
-        title: "We are reviewing your Birth Certificate",
-        time: "Yesterday",
-        body: "Our team is reviewing your upload. If we need a clearer photo, we’ll let you know."
-      },
-      {
-        type: "confirmation",
-        icon: "fas fa-check-circle",
-        title: "Address Document Approved",
-        time: "2 days ago",
-        body: "Your proof of address has been approved and added to your case file."
-      }
-    ],
-    education: [
-      {
-        category: "tvisa",
-        label: "T Visa",
-        title: "What is a T Visa?",
-        body: "A short overview of eligibility, process, and what to expect.",
-        duration: "6 min",
-        icon: "fas fa-graduation-cap"
-      },
-      {
-        category: "vawa",
-        label: "VAWA",
-        title: "VAWA Basics",
-        body: "Key concepts and what documents are commonly required.",
-        duration: "7 min",
-        icon: "fas fa-graduation-cap"
-      },
-      {
-        category: "documents",
-        label: "Documents",
-        title: "How to Upload Documents",
-        body: "Tips to avoid delays: clarity, angles, and required pages.",
-        duration: "4 min",
-        icon: "fas fa-file-alt"
-      }
-    ]
-  };
-
-  function seedDemoContent() {
-    renderTasks(DEMO.tasksPending, 'taskListPending');
-    renderTasks(DEMO.tasksSubmitted, 'taskListSubmitted');
-    renderTasks(DEMO.tasksApproved, 'taskListApproved');
-    renderMessages(DEMO.messages);
-    renderEducation(DEMO.education);
-  }
-
-  // ----------------------
-  // SUPABASE CLIENT (singleton ✅)
+  // Supabase client (singleton)
   // ----------------------
   function getSupabaseClient() {
+    if (!window.APP_CONFIG || !window.APP_CONFIG.supabase) {
+      throw new Error("APP_CONFIG missing. Check config.js load order.");
+    }
     if (!window._supabaseClient) {
       window._supabaseClient = window.supabase.createClient(
         window.APP_CONFIG.supabase.url,
@@ -422,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ----------------------
-  // LOGIN (Supabase)
+  // Login (Supabase)
   // ----------------------
   async function handleLogin() {
     console.log("CLICK LOGIN ✅");
@@ -441,35 +90,37 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const supabase = getSupabaseClient();
+    try {
+      const supabase = getSupabaseClient();
 
-    const { data, error } = await supabase
-      .from('case_logins')
-      .select('*')
-      .eq('case_ref', caseNumber)
-      .eq('pin', pin)
-      .single();
+      const { data, error } = await supabase
+        .from('case_logins')
+        .select('*')
+        .eq('case_ref', caseNumber)
+        .eq('pin', pin)
+        .single();
 
-    if (error || !data) {
-      console.error("Supabase login error:", error);
-      alert('Invalid case number or PIN');
-      return;
+      if (error || !data) {
+        console.error("Supabase login error:", error);
+        alert('Invalid case number or PIN');
+        return;
+      }
+
+      localStorage.setItem('honest_immigration_logged_in', 'true');
+      localStorage.setItem('honest_immigration_case', caseNumber);
+      localStorage.setItem('honest_immigration_client_id', data.client_id);
+
+      showAppScreen();
+    } catch (e) {
+      console.error(e);
+      alert("Login error. Check console for details.");
     }
-
-    localStorage.setItem('honest_immigration_logged_in', 'true');
-    localStorage.setItem('honest_immigration_case', caseNumber);
-    localStorage.setItem('honest_immigration_client_id', data.client_id);
-
-    showAppScreen();
   }
 
   function handleMagicLink() {
     alert('Magic link flow not implemented yet.');
   }
 
-  // ----------------------
-  // LOGOUT ✅
-  // ----------------------
   function handleLogout() {
     localStorage.removeItem('honest_immigration_logged_in');
     localStorage.removeItem('honest_immigration_case');
@@ -478,7 +129,132 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ----------------------
-  // EVENT LISTENERS
+  // Demo: Progress dots (Figma-like)
+  // ----------------------
+  function renderProgress() {
+    const host = document.getElementById('progressDots');
+    if (!host) return;
+
+    // 9 stages like your labels; mark first 2 done, third current
+    const total = 9;
+    const doneCount = 2;     // K + DOCS done
+    const currentIndex = 2;  // IC current
+
+    host.innerHTML = '';
+    for (let i = 0; i < total; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot-step';
+
+      if (i < doneCount) {
+        d.classList.add('done');
+        d.innerHTML = '<i class="fa-solid fa-check"></i>';
+      } else if (i === currentIndex) {
+        d.classList.add('current');
+        d.innerHTML = '<div class="mini"></div>';
+      } else {
+        d.innerHTML = '';
+      }
+
+      host.appendChild(d);
+    }
+  }
+
+  // ----------------------
+  // Bind buttons (ONCE, using delegation)
+  // ----------------------
+  let bound = false;
+  function bindAppButtonsOnce() {
+    if (bound) return;
+    bound = true;
+    console.log("✅ Binding app buttons (once)...");
+
+    // Top buttons
+    const educationBtn = document.getElementById('educationBtn');
+    const notificationsBtn = document.getElementById('notificationsBtn');
+    const eduBackBtn = document.getElementById('eduBackBtn');
+
+    if (educationBtn) {
+      educationBtn.addEventListener('click', () => {
+        showSection('educationScreen');
+        // (No bottom nav highlight in Figma for education overlay; leave as-is)
+      });
+    }
+
+    if (notificationsBtn) {
+      notificationsBtn.addEventListener('click', () => {
+        showSection('updatesScreen');
+        setBottomNavActive('updates');
+        const dot = document.getElementById('notifDot');
+        if (dot) dot.style.display = 'none';
+      });
+    }
+
+    if (eduBackBtn) {
+      eduBackBtn.addEventListener('click', () => {
+        showSection('homeScreen');
+        setBottomNavActive('home');
+      });
+    }
+
+    // Bottom nav
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.getAttribute('data-screen');
+        const sectionId = screenKeyToSectionId(key);
+        showSection(sectionId);
+        setBottomNavActive(key);
+      });
+    });
+
+    // Tabs (Documents)
+    document.querySelectorAll('.tab-btn').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const target = tab.getAttribute('data-tab');
+
+        document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+
+        document.querySelectorAll('#documentsScreen .tab-content').forEach(c => c.classList.remove('active'));
+        const panel = document.getElementById(target);
+        if (panel) panel.classList.add('active');
+      });
+    });
+
+    // Accordions (Tasks)
+    document.querySelectorAll('.accordion-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-accordion');
+        const panel = document.getElementById(id);
+        if (!panel) return;
+        panel.classList.toggle('open');
+      });
+    });
+
+    // Action buttons (demo)
+    document.body.addEventListener('click', (e) => {
+      const el = e.target.closest('[data-action], #uploadPassportBtn');
+      if (!el) return;
+
+      const action = el.getAttribute('data-action') || (el.id === 'uploadPassportBtn' ? 'upload-passport' : '');
+
+      if (action === 'upload-passport' || action === 'upload-document' || action === 'take-photo') {
+        alert("Demo action: this would open an upload flow.");
+      } else if (action === 'take-action' || action === 'review-draft') {
+        alert("Demo action: this would open the task workflow.");
+      } else if (action === 'view-journey') {
+        alert("Demo action: this would show the document journey timeline.");
+      } else if (action === 'contact-manager') {
+        alert("Demo action: this would open a message/contact screen.");
+      } else if (action === 'watch-video') {
+        alert("Demo action: this would open the video player.");
+      } else if (action === 'view-faq') {
+        alert("Demo action: this would open the FAQ.");
+      }
+    });
+  }
+
+  // ----------------------
+  // Event listeners (Login screen + logout)
   // ----------------------
   const loginBtn = document.getElementById('loginBtn');
   const magicBtn = document.getElementById('magicLinkBtn');
@@ -489,7 +265,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
 
   // ----------------------
-  // INIT
+  // Init
+  // ----------------------
+  checkLoginStatus();
+});
+// INIT
   // ----------------------
   checkLoginStatus();
 });
