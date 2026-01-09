@@ -1368,19 +1368,5 @@ body {
 .expanding {
     animation: expandStage 0.3s ease;
 }
-/* FORCE LOGOUT BUTTON VISIBILITY */
-#logoutBtn {
-  display: inline-flex !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  position: relative !important;
-  z-index: 9999 !important;
-  margin-left: 10px !important;
-  padding: 8px 12px !important;
-  border: 2px solid red !important;
-  background: yellow !important;
-  color: black !important;
-  font-weight: 700 !important;
-}
 
 
