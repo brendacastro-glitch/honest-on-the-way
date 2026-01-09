@@ -47,22 +47,47 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------
   // BIND ALL APP BUTTONS ✅
   // ----------------------
-  function bindAppButtons() {
-    console.log("✅ Binding app buttons...");
+function bindAppButtons() {
+  console.log("✅ Binding app buttons...");
 
-    const notificationsBtn = document.getElementById("notificationsBtn");
-    const educationBtn = document.getElementById("educationBtn");
+  // ✅ Top buttons
+  const notificationsBtn = document.getElementById("notificationsBtn");
+  const educationBtn = document.getElementById("educationBtn");
 
-    const homeBtn = document.getElementById("homeBtn");
-    const tasksBtn = document.getElementById("tasksBtn");
-    const documentsBtn = document.getElementById("documentsBtn");
-    const updatesBtn = document.getElementById("updatesBtn");
+  if (notificationsBtn) {
+    notificationsBtn.onclick = () => {
+      console.log("🔔 Notifications clicked");
+      alert("Notifications clicked (demo)");
+    };
+  }
 
-    if (notificationsBtn) {
-      notificationsBtn.onclick = () => {
-        console.log("🔔 Notifications clicked");
-        alert("Notifications clicked (demo)");
-      };
+  if (educationBtn) {
+    educationBtn.onclick = () => {
+      console.log("🎓 Education clicked");
+      showSection("educationScreen");
+    };
+  }
+
+  // ✅ Bottom nav buttons using data-screen
+  const navButtons = document.querySelectorAll(".nav-btn");
+
+  navButtons.forEach(btn => {
+    btn.onclick = () => {
+      const screen = btn.getAttribute("data-screen");
+      console.log("➡️ NAV clicked:", screen);
+
+      // Remove active class from all
+      navButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      // Show correct screen
+      if (screen === "home") showSection("homeScreen");
+      if (screen === "tasks") showSection("tasksScreen");
+      if (screen === "documents") showSection("documentsScreen");
+      if (screen === "updates") showSection("updatesScreen");
+    };
+}
+
     }
 
     if (educationBtn) {
