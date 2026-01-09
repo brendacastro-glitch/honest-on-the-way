@@ -7,13 +7,13 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <!-- ✅ Cache busting -->
+  <link rel="stylesheet" href="styles.css?v=20260109">
 
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
-
   <!-- LOGIN SCREEN -->
   <div class="screen" id="loginScreen">
     <div class="login-container">
@@ -37,7 +37,7 @@
           <input type="password" id="pin" placeholder="••••••">
         </div>
 
-        <button class="btn-primary" id="loginBtn">
+        <button class="btn-primary" id="loginBtn" type="button">
           <i class="fas fa-lock"></i> Sign In
         </button>
 
@@ -45,7 +45,7 @@
           <span>or</span>
         </div>
 
-        <button class="btn-secondary" id="magicLinkBtn">
+        <button class="btn-secondary" id="magicLinkBtn" type="button">
           <i class="fas fa-envelope"></i> Email me a magic link
         </button>
 
@@ -56,39 +56,39 @@
     </div>
   </div>
 
-  <!-- MAIN APP -->
+  <!-- MAIN APP (Hidden until login) -->
   <div class="screen" id="appScreen" style="display:none;">
 
     <!-- TOP NAVIGATION -->
     <header class="app-header">
       <div class="header-left">
-        <div class="user-avatar">MG</div>
+        <div class="user-avatar" id="avatarInitials">MG</div>
         <div class="user-info">
-          <h3>Hello, Maria</h3>
-          <p>Case: HI-2024-00123</p>
+          <h3 id="helloName">Hello, Maria</h3>
+          <p id="caseDisplay">Case: HI-2024-00123</p>
         </div>
       </div>
 
       <div class="header-right">
-        <button class="icon-btn" id="notificationsBtn" aria-label="Notifications">
+        <button class="icon-btn" id="notificationsBtn" aria-label="Notifications" type="button">
           <i class="fas fa-bell"></i>
           <span class="badge" id="notifBadge">3</span>
         </button>
 
-        <button class="icon-btn" id="educationBtn" aria-label="Education Center">
+        <button class="icon-btn" id="educationBtn" aria-label="Education Center" type="button">
           <i class="fas fa-graduation-cap"></i>
         </button>
 
-        <button class="icon-btn" id="logoutBtn" title="Log out" aria-label="Log out">
+        <button class="icon-btn" id="logoutBtn" title="Log out" aria-label="Log out" type="button">
           <i class="fas fa-right-from-bracket"></i>
         </button>
       </div>
     </header>
 
-    <!-- MAIN CONTENT -->
+    <!-- MAIN CONTENT AREA -->
     <main class="main-content" id="mainContent">
 
-      <!-- HOME -->
+      <!-- HOME SCREEN -->
       <div class="screen-content active" id="homeScreen">
 
         <div class="stats-row">
@@ -113,8 +113,77 @@
 
         <div class="section">
           <h3 class="section-title">Your Case Progress</h3>
+
           <div class="progress-tracker">
-            <p class="empty-text">Progress tracker placeholder (coming next).</p>
+            <div class="progress-stages">
+              <div class="progress-line" id="progressLine" style="width:25%;"></div>
+
+              <div class="stage-item completed" data-stage="K">
+                <div class="stage-circle">1</div>
+                <div class="stage-label">Contract</div>
+              </div>
+
+              <div class="stage-item completed" data-stage="D">
+                <div class="stage-circle">2</div>
+                <div class="stage-label">Docs</div>
+              </div>
+
+              <div class="stage-item current" data-stage="C">
+                <div class="stage-circle">3</div>
+                <div class="stage-label">Call</div>
+              </div>
+
+              <div class="stage-item" data-stage="R">
+                <div class="stage-circle">4</div>
+                <div class="stage-label">Review</div>
+              </div>
+
+              <div class="stage-item" data-stage="S">
+                <div class="stage-circle">5</div>
+                <div class="stage-label">Submit</div>
+              </div>
+            </div>
+
+            <div class="stage-description" id="stageDescription" style="display:none;">
+              <div class="stage-desc-card">
+                <button class="close-btn" id="closeDescBtn" type="button">×</button>
+                <div class="stage-abbrev-badge" id="stageAbbrev">K</div>
+                <h4 id="stageFullName">Signed Contract</h4>
+                <p id="stageDescText">The initial agreement between you and Honest Immigration.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="current-stage-card">
+            <div class="stage-header">
+              <span class="stage-tag current">Current Stage</span>
+              <span class="stage-name">Documentation Uploaded</span>
+            </div>
+
+            <p class="stage-detail">
+              We're gathering all required materials for your T Visa or VAWA petition.
+            </p>
+
+            <div class="responsibility-row">
+              <div class="responsibility-item">
+                <span class="responsibility-icon">👤</span>
+                <span>You: 2 items pending</span>
+              </div>
+
+              <div class="responsibility-item">
+                <span class="responsibility-icon">🏢</span>
+                <span>Honest Immigration: Reviewing documents</span>
+              </div>
+            </div>
+
+            <div class="timeline-note">
+              <i class="fas fa-info-circle"></i>
+              All clients must submit Passport and Birth Certificate to start their case.
+              The rest of the documentation typically takes 7–14 days to upload.
+              If you have a particular situation, please contact us.
+            </div>
           </div>
         </div>
 
@@ -124,150 +193,140 @@
               <i class="fas fa-exclamation-triangle"></i>
               <h4>Upload Passport Copy</h4>
             </div>
+
             <p class="action-detail">Required to proceed to next stage</p>
 
             <div class="action-footer">
               <span class="due-date">Due in 3 days</span>
-              <button class="btn-primary" id="uploadPassportBtn">
+              <button class="btn-primary" id="uploadPassportBtn" type="button">
                 <i class="fas fa-upload"></i> Upload Now
               </button>
             </div>
           </div>
         </div>
 
+        <div class="section">
+          <div class="next-stage-card">
+            <h4>Next: Introductory Call</h4>
+            <p>Your case manager will schedule a call to discuss your application strategy.</p>
+          </div>
+        </div>
+
       </div>
 
-      <!-- TASKS -->
+      <!-- TASKS SCREEN -->
       <div class="screen-content" id="tasksScreen">
-        <h3 class="section-title">Your Tasks</h3>
-
-        <div class="task-list">
-          <div class="task-card">
-            <div class="task-header">
-              <div class="task-info">
-                <div class="task-icon"><i class="fas fa-file-upload"></i></div>
-                <div class="task-details">
-                  <h4>Upload Birth Certificate</h4>
-                  <div class="task-meta">
-                    <span class="status-badge pending">Pending</span>
-                    <span class="due-date">Due in 7 days</span>
-                  </div>
-                </div>
-              </div>
-              <button class="btn-secondary small">Upload</button>
-            </div>
+        <div class="section">
+          <h3 class="section-title">Your Tasks</h3>
+          <div class="tabs">
+            <button class="tab-btn active" data-tab="pending" type="button">Pending</button>
+            <button class="tab-btn" data-tab="submitted" type="button">Submitted</button>
+            <button class="tab-btn" data-tab="approved" type="button">Approved</button>
           </div>
 
-          <div class="task-card">
-            <div class="task-header">
-              <div class="task-info">
-                <div class="task-icon"><i class="fas fa-calendar-check"></i></div>
-                <div class="task-details">
-                  <h4>Schedule Intro Call</h4>
-                  <div class="task-meta">
-                    <span class="status-badge submitted">Submitted</span>
-                    <span class="due-date">Waiting for confirmation</span>
-                  </div>
-                </div>
-              </div>
-              <span class="task-status"><i class="fas fa-check-circle"></i></span>
-            </div>
+          <div class="tab-content active" id="tab-pending">
+            <div class="task-list" id="taskListPending"></div>
+          </div>
+
+          <div class="tab-content" id="tab-submitted">
+            <div class="task-list" id="taskListSubmitted"></div>
+          </div>
+
+          <div class="tab-content" id="tab-approved">
+            <div class="task-list" id="taskListApproved"></div>
           </div>
         </div>
       </div>
 
-      <!-- DOCUMENTS -->
+      <!-- DOCUMENTS SCREEN -->
       <div class="screen-content" id="documentsScreen">
-        <h3 class="section-title">Your Documents</h3>
+        <div class="section">
+          <h3 class="section-title">Documents</h3>
 
-        <div class="upload-guide">
-          <h4>What to upload first</h4>
-          <ul class="upload-tips">
-            <li><i class="fas fa-check-circle"></i> Passport copy</li>
-            <li><i class="fas fa-check-circle"></i> Birth certificate</li>
-            <li><i class="fas fa-check-circle"></i> Any police reports</li>
-          </ul>
-        </div>
-
-        <div class="pending-docs">
-          <h4>Required</h4>
-          <div class="doc-item">
-            <i class="fas fa-passport"></i>
-            <div class="doc-info">
-              <h5>Passport Copy</h5>
-              <p>Required to proceed</p>
-            </div>
-            <span class="doc-status required">Required</span>
+          <div class="upload-guide">
+            <h4>How to upload</h4>
+            <ul class="upload-tips">
+              <li><i class="fas fa-check-circle"></i> Take a clear photo or upload a PDF</li>
+              <li><i class="fas fa-check-circle"></i> Make sure names & dates are readable</li>
+              <li><i class="fas fa-check-circle"></i> If you have questions, message your case manager</li>
+            </ul>
           </div>
 
-          <div class="doc-item">
-            <i class="fas fa-id-card"></i>
-            <div class="doc-info">
-              <h5>Birth Certificate</h5>
-              <p>Required to proceed</p>
+          <div class="document-actions">
+            <button class="document-action-btn" id="uploadDocBtn" type="button">
+              <i class="fas fa-upload"></i>
+              Upload Document
+            </button>
+
+            <button class="document-action-btn" id="scanDocBtn" type="button">
+              <i class="fas fa-camera"></i>
+              Scan with Camera
+            </button>
+          </div>
+
+          <div class="pending-docs">
+            <h4>Pending / Required</h4>
+
+            <div class="doc-item">
+              <i class="fas fa-file-alt"></i>
+              <div class="doc-info">
+                <h5>Passport</h5>
+                <p>Photo page (front) required</p>
+              </div>
+              <span class="doc-status required">Required</span>
             </div>
-            <span class="doc-status required">Required</span>
+
+            <div class="doc-item">
+              <i class="fas fa-file-alt"></i>
+              <div class="doc-info">
+                <h5>Birth Certificate</h5>
+                <p>Full document</p>
+              </div>
+              <span class="doc-status reviewing">Reviewing</span>
+            </div>
+
+            <div class="doc-item">
+              <i class="fas fa-file-alt"></i>
+              <div class="doc-info">
+                <h5>Proof of Address</h5>
+                <p>Utility bill or lease</p>
+              </div>
+              <span class="doc-status approved">Approved</span>
+            </div>
+
           </div>
         </div>
       </div>
 
-      <!-- UPDATES -->
+      <!-- UPDATES SCREEN -->
       <div class="screen-content" id="updatesScreen">
-        <h3 class="section-title">Updates</h3>
+        <div class="section">
+          <h3 class="section-title">Updates</h3>
 
-        <div class="messages-list">
-          <div class="message-card update">
-            <div class="message-icon"><i class="fas fa-bell"></i></div>
-            <div class="message-content">
-              <div class="message-header">
-                <h4>Your case has moved forward</h4>
-                <span class="message-time">Today</span>
-              </div>
-              <p>We received your initial information. Next step: documentation upload.</p>
-            </div>
+          <div class="message-filters">
+            <button class="filter-btn active" data-filter="all" type="button">All</button>
+            <button class="filter-btn" data-filter="request" type="button">Requests</button>
+            <button class="filter-btn" data-filter="update" type="button">Updates</button>
+            <button class="filter-btn" data-filter="confirmation" type="button">Confirmations</button>
           </div>
 
-          <div class="message-card request">
-            <div class="message-icon"><i class="fas fa-file-upload"></i></div>
-            <div class="message-content">
-              <div class="message-header">
-                <h4>Upload Passport Copy</h4>
-                <span class="message-time">2 days ago</span>
-              </div>
-              <p>Please upload a clear photo or scan of your passport to continue.</p>
-            </div>
-          </div>
+          <div class="messages-list" id="messagesList"></div>
         </div>
       </div>
 
-      <!-- EDUCATION -->
+      <!-- EDUCATION SCREEN -->
       <div class="screen-content" id="educationScreen">
-        <h3 class="section-title">Education Center</h3>
+        <div class="section">
+          <h3 class="section-title">Education Center</h3>
 
-        <div class="education-cards">
-          <div class="edu-card">
-            <div class="edu-thumbnail"><i class="fas fa-play"></i></div>
-            <div class="edu-content">
-              <h4>What is a T Visa?</h4>
-              <p>Learn the basics about eligibility and what the process looks like.</p>
-              <div class="edu-meta">
-                <span class="video-duration">4 min</span>
-                <span class="edu-category">Basics</span>
-              </div>
-            </div>
+          <div class="education-filters">
+            <button class="filter-btn active" data-edu="all" type="button">All</button>
+            <button class="filter-btn" data-edu="tvisa" type="button">T Visa</button>
+            <button class="filter-btn" data-edu="vawa" type="button">VAWA</button>
+            <button class="filter-btn" data-edu="documents" type="button">Documents</button>
           </div>
 
-          <div class="edu-card">
-            <div class="edu-thumbnail"><i class="fas fa-play"></i></div>
-            <div class="edu-content">
-              <h4>How to upload documents correctly</h4>
-              <p>Tips to avoid delays (lighting, file type, and what to include).</p>
-              <div class="edu-meta">
-                <span class="video-duration">3 min</span>
-                <span class="edu-category">Documents</span>
-              </div>
-            </div>
-          </div>
+          <div class="education-cards" id="educationCards"></div>
         </div>
       </div>
 
@@ -275,26 +334,26 @@
 
     <!-- BOTTOM NAVIGATION -->
     <nav class="bottom-nav">
-      <button class="nav-btn active" data-screen="home">
+      <button class="nav-btn active" data-screen="home" type="button">
         <i class="fas fa-home"></i><span>Home</span>
       </button>
 
-      <button class="nav-btn" data-screen="tasks">
+      <button class="nav-btn" data-screen="tasks" type="button">
         <i class="fas fa-tasks"></i><span>Tasks</span>
       </button>
 
-      <button class="nav-btn" data-screen="documents">
+      <button class="nav-btn" data-screen="documents" type="button">
         <i class="fas fa-file-alt"></i><span>Documents</span>
       </button>
 
-      <button class="nav-btn" data-screen="updates">
+      <button class="nav-btn" data-screen="updates" type="button">
         <i class="fas fa-bell"></i><span>Updates</span>
       </button>
     </nav>
   </div>
 
-  <!-- JS -->
-  <script src="config.js"></script>
-  <script src="app.js"></script>
+  <!-- JavaScript Files -->
+  <script src="config.js?v=20260109"></script>
+  <script src="app.js?v=20260109"></script>
 </body>
 </html>
