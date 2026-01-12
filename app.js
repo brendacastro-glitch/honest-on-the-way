@@ -16,14 +16,25 @@ document.addEventListener('DOMContentLoaded', () => {
     loginScreen.style.display = 'none';
     appScreen.style.display = 'block';
 
-    // Update case in header
+    // Get client info from localStorage
+    const clientId = localStorage.getItem('honest_immigration_client_id');
     const caseNumber = localStorage.getItem('honest_immigration_case') || '';
+    
+    // Update case in header
     const caseDisplay = document.getElementById('caseDisplay');
     if (caseDisplay && caseNumber) caseDisplay.textContent = `Case: ${caseNumber}`;
 
-    // Bind app interactions + render demo UI
+    // Load real user data or use demo
+    if (clientId && clientId !== 'demo_client_123') {
+      loadUserProfile(clientId);
+      loadCaseData(clientId, caseNumber);
+    } else {
+      // Use demo data
+      renderProgress();
+    }
+
+    // Bind app interactions
     bindAppButtonsOnce();
-    renderProgress();
   }
 
   function checkLoginStatus() {
@@ -93,39 +104,36 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const supabase = getSupabaseClient();
 
-      // Try different table names - you might need to adjust this
-      let tableName = 'clients'; // Common table name
-      const possibleTables = ['clients', 'users', 'case_logins', 'client_logins'];
-      
-      let data = null;
-      let error = null;
-      
-      // Try each possible table
-      for (const table of possibleTables) {
-        console.log(`Trying table: ${table}`);
-        const response = await supabase
-          .from(table)
-          .select('*')
-          .eq('case_number', caseNumber)
-          .eq('pin', pin)
-          .maybeSingle(); // Use maybeSingle instead of single to avoid throwing error
-        
-        if (response.data && !response.error) {
-          data = response.data;
-          break;
-        }
-        error = response.error;
+      // Query case_logins table with JOIN to clients
+      const { data, error } = await supabase
+        .from('case_logins')
+        .select(`
+          *,
+          clients (
+            id,
+            full_name,
+            email,
+            phone
+          )
+        `)
+        .eq('case_ref', caseNumber)
+        .eq('pin', pin)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Supabase error:", error);
+        alert('Login error: ' + error.message);
+        return;
       }
 
       if (!data) {
-        console.error("Login failed for all tables:", error);
-        
-        // For demo purposes, let's allow login with any PIN if case number looks valid
+        // For demo purposes, allow any login with case number starting with HI-
         if (caseNumber.startsWith('HI-')) {
           console.log("DEMO MODE: Allowing login for demo purposes");
           localStorage.setItem('honest_immigration_logged_in', 'true');
           localStorage.setItem('honest_immigration_case', caseNumber);
           localStorage.setItem('honest_immigration_client_id', 'demo_client_123');
+          localStorage.setItem('honest_immigration_client_name', 'Demo Client');
           
           showAppScreen();
           return;
@@ -135,9 +143,16 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
+      // Store login information
       localStorage.setItem('honest_immigration_logged_in', 'true');
       localStorage.setItem('honest_immigration_case', caseNumber);
-      localStorage.setItem('honest_immigration_client_id', data.id || data.client_id || 'unknown');
+      localStorage.setItem('honest_immigration_client_id', data.client_id);
+      
+      // Store client info if available
+      if (data.clients) {
+        localStorage.setItem('honest_immigration_client_name', data.clients.full_name || 'Client');
+        localStorage.setItem('honest_immigration_client_email', data.clients.email || '');
+      }
 
       showAppScreen();
     } catch (e) {
@@ -154,8 +169,11 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.removeItem('honest_immigration_logged_in');
     localStorage.removeItem('honest_immigration_case');
     localStorage.removeItem('honest_immigration_client_id');
+    localStorage.removeItem('honest_immigration_client_name');
+    localStorage.removeItem('honest_immigration_client_email');
     showLoginScreen();
   }
+
   // ----------------------
   // Load User Profile Data
   // ----------------------
@@ -163,8 +181,8 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const supabase = getSupabaseClient();
       const { data, error } = await supabase
-        .from(window.APP_CONFIG.supabase.tables.clients)
-        .select('full_name, email, phone, case_number')
+        .from('clients')
+        .select('full_name, email, phone')
         .eq('id', clientId)
         .single();
       
@@ -172,13 +190,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update UI with real user data
         const userName = document.getElementById('userName');
         const userInitials = document.getElementById('userInitials');
-        const caseDisplay = document.getElementById('caseDisplay');
         
         if (userName) userName.textContent = data.full_name || 'Client';
         if (userInitials) userInitials.textContent = getInitials(data.full_name || 'Client');
-        if (caseDisplay && data.case_number) {
-          caseDisplay.textContent = `Case: ${data.case_number}`;
-        }
       }
     } catch (error) {
       console.error('Error loading profile:', error);
@@ -196,58 +210,139 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------
   // Load Case Data
   // ----------------------
-  async function loadCaseData(clientId) {
+  async function loadCaseData(clientId, caseNumber) {
     try {
       const supabase = getSupabaseClient();
-      const { data, error } = await supabase
-        .from(window.APP_CONFIG.supabase.tables.cases)
+      
+      // Load case information
+      const { data: caseData, error: caseError } = await supabase
+        .from('cases')
         .select('*')
-        .eq('client_id', clientId)
-        .order('created_at', { ascending: false })
-        .limit(1)
+        .eq('case_ref', caseNumber)
         .single();
       
-      if (data && !error) {
+      if (caseData && !caseError) {
         // Update progress based on real case stage
-        updateRealProgress(data.current_stage, data.total_stages);
+        updateRealProgress(caseData.current_stage);
         
-        // Update urgent tasks if any
-        if (data.urgent_tasks && data.urgent_tasks.length > 0) {
-          updateUrgentTasks(data.urgent_tasks);
-        }
+        // Load related data
+        loadClientTasks(caseNumber);
+        loadClientDocuments(caseNumber);
+        loadCaseUpdates(caseNumber);
+      } else {
+        // Fallback to demo data
+        renderProgress();
       }
     } catch (error) {
       console.error('Error loading case data:', error);
-      // Fallback to demo data
       renderProgress();
     }
   }
 
   // ----------------------
-  // Update Progress Based on Real Data
+  // Load Client Tasks
   // ----------------------
-  function updateRealProgress(currentStage, totalStages = 9) {
+  async function loadClientTasks(caseRef) {
+    try {
+      const supabase = getSupabaseClient();
+      const { data, error } = await supabase
+        .from('client_tasks')
+        .select('*')
+        .eq('case_ref', caseRef)
+        .order('due_date', { ascending: true });
+      
+      if (data && !error && data.length > 0) {
+        updateTasksUI(data);
+      } else {
+        // Show demo tasks if no real data
+        console.log('No tasks found, showing demo data');
+      }
+    } catch (error) {
+      console.error('Error loading tasks:', error);
+    }
+  }
+
+  function updateTasksUI(tasks) {
+    // For now, just log the tasks
+    console.log('Tasks to display:', tasks);
+    // TODO: Implement UI update for tasks
+  }
+
+  // ----------------------
+  // Load Client Documents
+  // ----------------------
+  async function loadClientDocuments(caseRef) {
+    try {
+      const supabase = getSupabaseClient();
+      const { data, error } = await supabase
+        .from('client_documents')
+        .select('*')
+        .eq('case_ref', caseRef)
+        .order('uploaded_at', { ascending: false });
+      
+      if (data && !error && data.length > 0) {
+        updateDocumentsUI(data);
+      } else {
+        console.log('No documents found');
+      }
+    } catch (error) {
+      console.error('Error loading documents:', error);
+    }
+  }
+
+  function updateDocumentsUI(documents) {
+    console.log('Documents to display:', documents);
+    // TODO: Implement UI update for documents
+  }
+
+  // ----------------------
+  // Load Case Updates
+  // ----------------------
+  async function loadCaseUpdates(caseRef) {
+    try {
+      const supabase = getSupabaseClient();
+      const { data, error } = await supabase
+        .from('case_updates')
+        .select('*')
+        .eq('case_ref', caseRef)
+        .order('created_at', { ascending: false })
+        .limit(10);
+      
+      if (data && !error && data.length > 0) {
+        updateUpdatesUI(data);
+        
+        // Show notification dot if there are unread updates
+        const dot = document.getElementById('notifDot');
+        if (dot && data.length > 0) {
+          dot.style.display = 'block';
+        }
+      } else {
+        console.log('No updates found');
+      }
+    } catch (error) {
+      console.error('Error loading updates:', error);
+    }
+  }
+
+  function updateUpdatesUI(updates) {
+    console.log('Updates to display:', updates);
+    // TODO: Implement UI update for updates
+  }
+
+  // ----------------------
+  // Progress Functions
+  // ----------------------
+  function renderProgress() {
     const host = document.getElementById('progressDots');
     if (!host) return;
 
-    // Map stage names to indices (you'll need to adjust this based on your stage names)
-    const stageMap = {
-      'intake': 0,
-      'documentation': 1,
-      'initial_contact': 2,
-      'assessment': 3,
-      'preparation': 4,
-      'preparation_review': 5,
-      'approval_review': 6,
-      'filing_ready': 7,
-      'submitted': 8
-    };
-    
-    const currentIndex = stageMap[currentStage] || 2; // Default to stage 2 if not found
-    const doneCount = currentIndex; // All stages before current are done
-    
+    // 9 stages like your labels; mark first 2 done, third current
+    const total = 9;
+    const doneCount = 2;     // K + DOCS done
+    const currentIndex = 2;  // IC current
+
     host.innerHTML = '';
-    for (let i = 0; i < totalStages; i++) {
+    for (let i = 0; i < total; i++) {
       const d = document.createElement('div');
       d.className = 'dot-step';
 
@@ -265,31 +360,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ----------------------
-  // Update Urgent Tasks
-  // ----------------------
-  function updateUrgentTasks(tasks) {
-    // This is a placeholder - implement based on your UI
-    console.log('Urgent tasks:', tasks);
-    
-    // Example: Update the urgent card
-    const urgentCard = document.querySelector('.urgent-card h3');
-    if (urgentCard && tasks.length > 0) {
-      urgentCard.textContent = tasks[0].title || 'Complete pending task';
-    }
-  }
-  // ----------------------
-  // Demo: Progress dots (Figma-like)
-  // ----------------------
-  function renderProgress() {
+  function updateRealProgress(currentStage) {
     const host = document.getElementById('progressDots');
     if (!host) return;
 
-    // 9 stages like your labels; mark first 2 done, third current
+    // Map stage names to indices based on your progress labels
+    const stageMap = {
+      'k': 0,
+      'docs': 1,
+      'ic': 2,
+      'aq': 3,
+      'pd': 4,
+      'pdr': 5,
+      'app_review': 6,
+      'fr': 7,
+      's': 8
+    };
+    
+    // Convert stage to lowercase for matching
+    const stageKey = currentStage ? currentStage.toLowerCase() : 'ic';
+    const currentIndex = stageMap[stageKey] || 2; // Default to stage 2 if not found
+    const doneCount = currentIndex; // All stages before current are done
     const total = 9;
-    const doneCount = 2;     // K + DOCS done
-    const currentIndex = 2;  // IC current
-
+    
     host.innerHTML = '';
     for (let i = 0; i < total; i++) {
       const d = document.createElement('div');
@@ -326,7 +419,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (educationBtn) {
       educationBtn.addEventListener('click', () => {
         showSection('educationScreen');
-        // (No bottom nav highlight in Figma for education overlay; leave as-is)
       });
     }
 
@@ -418,4 +510,4 @@ document.addEventListener('DOMContentLoaded', () => {
   // Init
   // ----------------------
   checkLoginStatus();
-}); // This closes the DOMContentLoaded event listener
+});
