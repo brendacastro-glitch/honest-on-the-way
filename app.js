@@ -358,6 +358,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       host.appendChild(d);
     }
+    
+    // Setup click handlers for progress
+    setTimeout(setupProgressStageClicks, 100);
   }
 
   function updateRealProgress(currentStage) {
@@ -400,6 +403,318 @@ document.addEventListener('DOMContentLoaded', () => {
 
       host.appendChild(d);
     }
+    
+    // Setup click handlers for progress
+    setTimeout(setupProgressStageClicks, 100);
+  }
+
+  // ----------------------
+  // Progress Stage Click Handlers
+  // ----------------------
+  function setupProgressStageClicks() {
+    // Stage definitions with meanings
+    const stageDefinitions = {
+      'k': {
+        short: 'K',
+        full: 'Know',
+        meaning: 'Initial intake and understanding of your case. We gather basic information about your situation.'
+      },
+      'docs': {
+        short: 'DOCS',
+        full: 'Documentation',
+        meaning: 'Collecting and organizing all required documents. This includes passports, IDs, employment letters, etc.'
+      },
+      'ic': {
+        short: 'IC',
+        full: 'Introductory Call',
+        meaning: 'First meeting with your case manager to discuss your case in detail and answer your questions.'
+      },
+      'aq': {
+        short: 'AQ',
+        full: 'Assessment & Qualification',
+        meaning: 'Our legal team reviews your case to determine eligibility and best strategy.'
+      },
+      'pd': {
+        short: 'PD',
+        full: 'Petition Drafting',
+        meaning: 'Drafting the legal petition or application with all supporting evidence.'
+      },
+      'pdr': {
+        short: 'PDR',
+        full: 'Petition Draft Review',
+        meaning: 'You review the draft petition for accuracy before final submission.'
+      },
+      'app_review': {
+        short: 'APP REVIEW',
+        full: 'Application Review',
+        meaning: 'Final review by our senior attorneys before submission to USCIS.'
+      },
+      'fr': {
+        short: 'FR',
+        full: 'Filing Ready',
+        meaning: 'All documents are complete and ready for filing with immigration authorities.'
+      },
+      's': {
+        short: 'S',
+        full: 'Submitted',
+        meaning: 'Case has been submitted to USCIS. Now waiting for response or next steps.'
+      }
+    };
+
+    // Make progress labels clickable
+    const progressLabels = document.querySelector('.progress-labels');
+    if (progressLabels) {
+      // Add click event to each label span
+      const labels = progressLabels.querySelectorAll('span');
+      labels.forEach((label, index) => {
+        // Find which stage this label represents
+        const labelText = label.textContent.trim().toLowerCase().replace(/\n/g, ' ').replace(/\s+/g, ' ');
+        let stageKey = '';
+        
+        // Map label text to stage key
+        if (labelText.includes('k')) stageKey = 'k';
+        else if (labelText.includes('docs')) stageKey = 'docs';
+        else if (labelText.includes('ic')) stageKey = 'ic';
+        else if (labelText.includes('aq')) stageKey = 'aq';
+        else if (labelText.includes('pd')) stageKey = 'pd';
+        else if (labelText.includes('pdr')) stageKey = 'pdr';
+        else if (labelText.includes('app review')) stageKey = 'app_review';
+        else if (labelText.includes('fr')) stageKey = 'fr';
+        else if (labelText.includes('s')) stageKey = 's';
+        
+        if (stageKey && stageDefinitions[stageKey]) {
+          label.style.cursor = 'pointer';
+          label.style.textDecoration = 'underline';
+          label.style.textDecorationStyle = 'dotted';
+          label.title = `Click to learn about ${stageDefinitions[stageKey].full} stage`;
+          
+          label.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showStageInfo(stageKey, stageDefinitions[stageKey], index);
+          });
+        }
+      });
+    }
+
+    // Also make progress dots clickable
+    const progressDots = document.getElementById('progressDots');
+    if (progressDots) {
+      const dots = progressDots.querySelectorAll('.dot-step');
+      dots.forEach((dot, index) => {
+        dot.style.cursor = 'pointer';
+        
+        // Find which stage this dot represents
+        const stageKeys = Object.keys(stageDefinitions);
+        const stageKey = index < stageKeys.length ? stageKeys[index] : null;
+        
+        if (stageKey && stageDefinitions[stageKey]) {
+          dot.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showStageInfo(stageKey, stageDefinitions[stageKey], index);
+          });
+        }
+      });
+    }
+  }
+
+  function showStageInfo(stageKey, stageInfo, index) {
+    // Create or show stage info modal
+    let modal = document.getElementById('stageInfoModal');
+    
+    if (!modal) {
+      // Create modal if it doesn't exist
+      modal = document.createElement('div');
+      modal.id = 'stageInfoModal';
+      modal.className = 'stage-modal-overlay';
+      modal.innerHTML = `
+        <div class="stage-modal">
+          <div class="stage-modal-header">
+            <h3>Stage ${index + 1}: ${stageInfo.full}</h3>
+            <button class="stage-modal-close">&times;</button>
+          </div>
+          <div class="stage-modal-body">
+            <div class="stage-badge">${stageInfo.short}</div>
+            <p>${stageInfo.meaning}</p>
+            <div class="stage-status">
+              <strong>Your status:</strong> 
+              <span class="stage-status-text" id="currentStageStatus">Loading...</span>
+            </div>
+          </div>
+          <div class="stage-modal-footer">
+            <button class="btn-secondary stage-modal-close">Close</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+      
+      // Add close handlers
+      modal.querySelectorAll('.stage-modal-close').forEach(btn => {
+        btn.addEventListener('click', () => {
+          modal.style.display = 'none';
+        });
+      });
+      
+      // Close when clicking outside
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+      
+      // Add CSS for modal
+      addStageModalStyles();
+    }
+    
+    // Update modal content
+    modal.querySelector('h3').textContent = `Stage ${index + 1}: ${stageInfo.full}`;
+    modal.querySelector('.stage-badge').textContent = stageInfo.short;
+    modal.querySelector('p').textContent = stageInfo.meaning;
+    
+    // Determine status for this stage
+    const caseNumber = localStorage.getItem('honest_immigration_case');
+    const statusText = getStageStatus(index, caseNumber);
+    modal.querySelector('#currentStageStatus').textContent = statusText;
+    
+    // Show modal
+    modal.style.display = 'flex';
+  }
+
+  function getStageStatus(stageIndex, caseNumber) {
+    // This function determines the status of a specific stage
+    // In a real app, you'd check the database
+    // For now, using demo logic
+    
+    const clientId = localStorage.getItem('honest_immigration_client_id');
+    
+    if (clientId === 'demo_client_123') {
+      // Demo logic
+      if (stageIndex < 2) return '✅ Completed';
+      if (stageIndex === 2) return '🟡 In Progress';
+      return '⏳ Not Started';
+    }
+    
+    // Real logic would check database here
+    return '⏳ Not Started';
+  }
+
+  function addStageModalStyles() {
+    // Only add styles once
+    if (document.getElementById('stageModalStyles')) return;
+    
+    const styles = document.createElement('style');
+    styles.id = 'stageModalStyles';
+    styles.textContent = `
+      .stage-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 10000;
+        padding: 20px;
+      }
+      
+      .stage-modal {
+        background: white;
+        border-radius: 20px;
+        max-width: 400px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+      }
+      
+      .stage-modal-header {
+        background: linear-gradient(180deg, #2a58c7 0%, #1E3A8A 100%);
+        color: white;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      
+      .stage-modal-header h3 {
+        margin: 0;
+        font-size: 18px;
+      }
+      
+      .stage-modal-close {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
+      .stage-modal-close:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+      
+      .stage-modal-body {
+        padding: 25px;
+      }
+      
+      .stage-badge {
+        display: inline-block;
+        background: #3b82f6;
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 14px;
+        margin-bottom: 15px;
+      }
+      
+      .stage-modal-body p {
+        color: #64748b;
+        line-height: 1.6;
+        margin-bottom: 20px;
+      }
+      
+      .stage-status {
+        background: #f8fafc;
+        padding: 12px;
+        border-radius: 10px;
+        border-left: 4px solid #3b82f6;
+      }
+      
+      .stage-status strong {
+        color: #1e293b;
+      }
+      
+      .stage-status-text {
+        display: block;
+        margin-top: 5px;
+        color: #475569;
+      }
+      
+      .stage-modal-footer {
+        padding: 20px;
+        border-top: 1px solid #e5e7eb;
+        text-align: right;
+      }
+      
+      /* Make progress labels more interactive */
+      .progress-labels span:hover {
+        color: #3b82f6;
+        text-decoration: underline !important;
+      }
+      
+      .dot-step:hover {
+        transform: scale(1.1);
+        transition: transform 0.2s;
+      }
+    `;
+    document.head.appendChild(styles);
   }
 
   // ----------------------
@@ -493,6 +808,9 @@ document.addEventListener('DOMContentLoaded', () => {
         alert("Demo action: this would open the FAQ.");
       }
     });
+
+    // Progress stage click handlers
+    setTimeout(setupProgressStageClicks, 300);
   }
 
   // ----------------------
