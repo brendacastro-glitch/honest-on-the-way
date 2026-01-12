@@ -6,9 +6,9 @@ window.APP_CONFIG = {
       case_logins: 'case_logins',
       clients: 'clients',
       cases: 'cases',
-      documents: 'client_documents',     // You need to create this
-      tasks: 'client_tasks',            // You need to create this
-      updates: 'case_updates'           // You need to create this
+      documents: 'client_documents',    
+      tasks: 'client_tasks',           
+      updates: 'case_updates'           
     }
   }
 };
