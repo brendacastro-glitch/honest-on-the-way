@@ -207,8 +207,294 @@ document.addEventListener('DOMContentLoaded', () => {
       .substring(0, 2);
   }
 
+  // =============================================
+  // DOCUMENT CHECKLIST SYSTEM - ADD THIS SECTION
+  // =============================================
+  const DOCUMENT_TEMPLATES = {
+    // T VISA TEMPLATES
+    'T Visa Principal': [
+      { id: 't1', name: '2 Passport Pictures', required: true, category: 'required' },
+      { id: 't2', name: 'G-28', required: true, category: 'required' },
+      { id: 't3', name: 'I-914', required: true, category: 'required' },
+      { id: 't4', name: 'PD', required: true, category: 'required' },
+      { id: 't5', name: 'Birth Certificate', required: true, category: 'required' },
+      { id: 't6', name: 'Birth Certificate Translation', required: true, category: 'required' },
+      { id: 't7', name: 'Copy of Passport', required: true, category: 'required' },
+      { id: 't8', name: 'Trafficking Report Agreement', required: true, category: 'required' },
+      { id: 't9', name: 'I-914 Supplement B', required: true, category: 'required' },
+      { id: 't10', name: 'I-192', required: false, category: 'conditional', condition: 'Client is NOT a Visa Overstay' },
+      { id: 't11', name: 'I-765 (C) (40)', required: true, category: 'required' },
+      { id: 't12', name: 'FBI Criminal Record', required: true, category: 'required' },
+      { id: 't13', name: 'USC Kids Birth Certificates', required: false, category: 'conditional', condition: 'If has US-born children' },
+      { id: 't14', name: 'Divorce Decree', required: false, category: 'conditional', condition: 'If previously divorced' },
+      { id: 't15', name: 'OPT (Previous Immigration)', required: false, category: 'conditional', condition: 'If had previous immigration processes' }
+    ],
+    
+    'VAWA Spouse': [
+      { id: 'v1', name: '2 Passport Pictures', required: true, category: 'required' },
+      { id: 'v2', name: 'G-28', required: true, category: 'required' },
+      { id: 'v3', name: 'I-360', required: true, category: 'required' },
+      { id: 'v4', name: 'PD', required: true, category: 'required' },
+      { id: 'v5', name: 'Birth Certificate', required: true, category: 'required' },
+      { id: 'v6', name: 'Birth Certificate Translation', required: true, category: 'required' },
+      { id: 'v7', name: 'Copy of Passport', required: true, category: 'required' },
+      { id: 'v8', name: 'Spouse\'s Legal Status Proof', required: true, category: 'required' },
+      { id: 'v9', name: 'Marriage Certificate', required: true, category: 'required' },
+      { id: 'v10', name: 'OPT (Previous Immigration)', required: false, category: 'conditional' },
+      { id: 'v11', name: 'USC Kids Birth Certificates', required: false, category: 'conditional' },
+      { id: 'v12', name: 'Divorce Decree (ALL ex-spouses)', required: false, category: 'conditional' },
+      { id: 'v13', name: 'Joint Residence Evidence (3 docs)', required: true, category: 'required' },
+      { id: 'v14', name: 'Joint Pictures (2-10)', required: true, category: 'required' },
+      { id: 'v15', name: 'FBI Criminal Record', required: true, category: 'required' }
+    ],
+    
+    'VAWA Parent': [
+      { id: 'vp1', name: '2 Passport Pictures', required: true, category: 'required' },
+      { id: 'vp2', name: 'G-28', required: true, category: 'required' },
+      { id: 'vp3', name: 'I-360', required: true, category: 'required' },
+      { id: 'vp4', name: 'PD', required: true, category: 'required' },
+      { id: 'vp5', name: 'Birth Certificate', required: true, category: 'required' },
+      { id: 'vp6', name: 'Birth Certificate Translation', required: true, category: 'required' },
+      { id: 'vp7', name: 'Copy of Passport', required: true, category: 'required' },
+      { id: 'vp8', name: 'Abuser-Child\'s Birth Certificate', required: true, category: 'required' },
+      { id: 'vp9', name: 'Previous Immigration Petition (OPT)', required: false, category: 'conditional' },
+      { id: 'vp10', name: 'Joint Residency Evidence (3 docs)', required: true, category: 'required' },
+      { id: 'vp11', name: 'Joint Pictures (2-10)', required: true, category: 'required' },
+      { id: 'vp12', name: 'USC Kids Birth Certificates', required: false, category: 'conditional' },
+      { id: 'vp13', name: 'FBI Criminal Record', required: true, category: 'required' }
+    ],
+    
+    'VAWA Parent + AOS': [
+      { id: 'vpa1', name: '6 Passport Pictures', required: true, category: 'required' },
+      { id: 'vpa2', name: 'G-28', required: true, category: 'required' },
+      { id: 'vpa3', name: 'I-360', required: true, category: 'required' },
+      { id: 'vpa4', name: 'I-485', required: true, category: 'required' },
+      { id: 'vpa5', name: 'I-864W', required: true, category: 'required' },
+      { id: 'vpa6', name: 'I-765', required: true, category: 'required' },
+      { id: 'vpa7', name: 'PD', required: true, category: 'required' },
+      { id: 'vpa8', name: 'AOS PD', required: true, category: 'required' },
+      { id: 'vpa9', name: 'Birth Certificate', required: true, category: 'required' },
+      { id: 'vpa10', name: 'Birth Certificate Translation', required: true, category: 'required' },
+      { id: 'vpa11', name: 'Copy of Passport', required: true, category: 'required' },
+      { id: 'vpa12', name: 'Abuser-Child\'s Birth Certificate', required: true, category: 'required' },
+      { id: 'vpa13', name: 'Previous Immigration Petition (OPT)', required: false, category: 'conditional' },
+      { id: 'vpa14', name: 'Joint Residency Evidence (3 docs)', required: true, category: 'required' },
+      { id: 'vpa15', name: 'Joint Pictures (2-10)', required: true, category: 'required' },
+      { id: 'vpa16', name: 'USC Kids Birth Certificates', required: false, category: 'conditional' },
+      { id: 'vpa17', name: 'Medical Exam', required: true, category: 'required', note: 'Sent by client' },
+      { id: 'vpa18', name: 'FBI Criminal Record', required: true, category: 'required' }
+    ],
+    
+    'VAWA Spouse + AOS': [
+      { id: 'vsa1', name: '6 Passport Pictures', required: true, category: 'required' },
+      { id: 'vsa2', name: 'G-28', required: true, category: 'required' },
+      { id: 'vsa3', name: 'I-360', required: true, category: 'required' },
+      { id: 'vsa4', name: 'I-485', required: true, category: 'required' },
+      { id: 'vsa5', name: 'I-864W', required: true, category: 'required' },
+      { id: 'vsa6', name: 'I-765', required: true, category: 'required' },
+      { id: 'vsa7', name: 'PD', required: true, category: 'required' },
+      { id: 'vsa8', name: 'AOS PD', required: true, category: 'required' },
+      { id: 'vsa9', name: 'Birth Certificate', required: true, category: 'required' },
+      { id: 'vsa10', name: 'Birth Certificate Translation', required: true, category: 'required' },
+      { id: 'vsa11', name: 'Copy of Passport', required: true, category: 'required' },
+      { id: 'vsa12', name: 'Spouse\'s Legal Status Proof', required: true, category: 'required' },
+      { id: 'vsa13', name: 'Marriage Certificate', required: true, category: 'required' },
+      { id: 'vsa14', name: 'Previous Immigration Applications (OPT)', required: false, category: 'conditional' },
+      { id: 'vsa15', name: 'USA Kids Birth Certificates', required: false, category: 'conditional' },
+      { id: 'vsa16', name: 'Divorce Decree (all ex-spouses)', required: false, category: 'conditional' },
+      { id: 'vsa17', name: 'Joint Residence Evidence', required: true, category: 'required' },
+      { id: 'vsa18', name: 'Joint Pictures', required: true, category: 'required' },
+      { id: 'vsa19', name: 'FBI Criminal Record', required: true, category: 'required' },
+      { id: 'vsa20', name: 'Medical Exam', required: true, category: 'required', note: 'Sent by client' }
+    ]
+  };
+
+  async function loadDocumentChecklist(caseRef, visaType = null) {
+    try {
+      const supabase = getSupabaseClient();
+      
+      // If visaType not provided, get it from cases table
+      if (!visaType) {
+        const { data: caseData, error: caseError } = await supabase
+          .from('cases')
+          .select('visa_type')
+          .eq('case_ref', caseRef)
+          .single();
+        
+        if (caseData && !caseError) {
+          visaType = caseData.visa_type;
+        }
+      }
+      
+      // Default to T Visa if no type found
+      if (!visaType) visaType = 'T Visa Principal';
+      
+      // Get template for this visa type
+      const template = DOCUMENT_TEMPLATES[visaType] || DOCUMENT_TEMPLATES['T Visa Principal'];
+      
+      // Get uploaded documents for this case
+      const { data: uploadedDocs, error: docsError } = await supabase
+        .from('client_documents')
+        .select('*')
+        .eq('case_ref', caseRef);
+      
+      // Create checklist with status
+      const checklist = template.map(doc => {
+        const uploaded = uploadedDocs?.find(u => 
+          u.document_name === doc.name || 
+          u.document_name?.includes(doc.name.split(' ')[0])
+        );
+        
+        return {
+          ...doc,
+          uploaded: !!uploaded,
+          uploaded_id: uploaded?.id,
+          status: uploaded?.status || 'pending',
+          uploaded_at: uploaded?.uploaded_at,
+          notes: uploaded?.notes || doc.note || ''
+        };
+      });
+      
+      return {
+        visaType,
+        checklist,
+        stats: {
+          total: checklist.length,
+          required: checklist.filter(d => d.required).length,
+          uploaded: checklist.filter(d => d.uploaded).length,
+          approved: checklist.filter(d => d.status === 'approved').length
+        }
+      };
+      
+    } catch (error) {
+      console.error('Error loading document checklist:', error);
+      return null;
+    }
+  }
+
+  function renderDocumentChecklist(checklistData) {
+    const documentsScreen = document.getElementById('documentsScreen');
+    if (!documentsScreen || !checklistData) return;
+    
+    const { visaType, checklist, stats } = checklistData;
+    
+    // Update the documents section title
+    const header = documentsScreen.querySelector('.screen-header h2');
+    if (header) {
+      header.innerHTML = `Documents for ${visaType} <small class="muted">(${stats.uploaded}/${stats.total} uploaded)</small>`;
+    }
+    
+    // Clear existing tab content
+    const tabsContainer = documentsScreen.querySelector('.tabs');
+    const tabContents = documentsScreen.querySelectorAll('.tab-content');
+    
+    if (tabsContainer && tabContents.length > 0) {
+      // Update tabs with real counts
+      const requiredCount = checklist.filter(d => d.required && !d.uploaded).length;
+      const underReviewCount = checklist.filter(d => d.status === 'under_review').length;
+      const approvedCount = checklist.filter(d => d.status === 'approved').length;
+      
+      // Update tab buttons
+      const tabButtons = tabsContainer.querySelectorAll('.tab-btn');
+      if (tabButtons[0]) tabButtons[0].textContent = `To Upload (${requiredCount})`;
+      if (tabButtons[1]) tabButtons[1].textContent = `Under Review (${underReviewCount})`;
+      if (tabButtons[2]) tabButtons[2].textContent = `Approved (${approvedCount})`;
+      
+      // Render documents in appropriate tabs
+      renderTabContent('toUpload', checklist.filter(d => d.required && !d.uploaded));
+      renderTabContent('underReview', checklist.filter(d => d.status === 'under_review'));
+      renderTabContent('approved', checklist.filter(d => d.status === 'approved'));
+    }
+  }
+
+  function renderTabContent(tabId, documents) {
+    const tab = document.getElementById(tabId);
+    if (!tab) return;
+    
+    tab.innerHTML = '';
+    
+    if (documents.length === 0) {
+      tab.innerHTML = `
+        <div class="doc-card">
+          <div class="doc-row">
+            <div class="doc-ic green"><i class="fa-solid fa-check-circle"></i></div>
+            <div class="doc-main">
+              <div class="doc-title">All caught up!</div>
+              <div class="doc-sub">No documents in this category</div>
+            </div>
+          </div>
+        </div>
+      `;
+      return;
+    }
+    
+    documents.forEach(doc => {
+      const docCard = document.createElement('div');
+      docCard.className = 'doc-card';
+      
+      const statusIcon = doc.status === 'approved' ? 'green' : 
+                        doc.status === 'under_review' ? 'amber' : 'blue';
+      
+      const statusText = doc.status === 'approved' ? 'Approved' :
+                        doc.status === 'under_review' ? 'Under Review' :
+                        doc.uploaded ? 'Uploaded' : 'Required';
+      
+      docCard.innerHTML = `
+        <div class="doc-row">
+          <div class="doc-ic ${statusIcon}">
+            <i class="fa-regular fa-file-lines"></i>
+          </div>
+          <div class="doc-main">
+            <div class="doc-title">${doc.name}</div>
+            <div class="doc-sub">
+              ${doc.required ? '<span class="badge required">Required</span>' : '<span class="badge optional">Optional</span>'}
+              ${doc.condition ? `<span class="meta"><i class="fa-solid fa-info-circle"></i> ${doc.condition}</span>` : ''}
+            </div>
+            ${doc.note ? `<div class="doc-sub"><i class="fa-solid fa-note"></i> ${doc.note}</div>` : ''}
+          </div>
+        </div>
+        
+        ${doc.uploaded ? `
+          <div class="doc-status">
+            <span class="badge ${doc.status === 'approved' ? 'approved' : doc.status === 'under_review' ? 'submitted' : 'pending'}">
+              ${statusText}
+            </span>
+            ${doc.uploaded_at ? `<span class="meta"><i class="fa-regular fa-calendar"></i> ${formatDate(doc.uploaded_at)}</span>` : ''}
+          </div>
+          
+          <button class="btn-secondary full" data-action="view-document" data-doc-id="${doc.uploaded_id}">
+            <i class="fa-regular fa-eye"></i> View Details
+          </button>
+        ` : `
+          <div class="doc-actions">
+            <button class="btn-primary full" data-action="upload-specific" data-doc-name="${doc.name}">
+              <i class="fa-solid fa-upload"></i> Upload ${doc.name}
+            </button>
+            ${doc.required ? '' : `
+              <button class="btn-secondary full" data-action="skip-document" data-doc-name="${doc.name}">
+                <i class="fa-solid fa-forward"></i> Skip for now
+              </button>
+            `}
+          </div>
+        `}
+      `;
+      
+      tab.appendChild(docCard);
+    });
+  }
+
+  function formatDate(dateString) {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+  }
+
   // ----------------------
-  // Load Case Data
+  // Load Case Data (UPDATED)
   // ----------------------
   async function loadCaseData(clientId, caseNumber) {
     try {
@@ -225,9 +511,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update progress based on real case stage
         updateRealProgress(caseData.current_stage);
         
-        // Load related data
+        // Load document checklist based on visa type
+        const checklistData = await loadDocumentChecklist(caseNumber, caseData.visa_type);
+        if (checklistData) {
+          renderDocumentChecklist(checklistData);
+        }
+        
+        // Load other related data
         loadClientTasks(caseNumber);
-        loadClientDocuments(caseNumber);
         loadCaseUpdates(caseNumber);
       } else {
         // Fallback to demo data
@@ -266,33 +557,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // For now, just log the tasks
     console.log('Tasks to display:', tasks);
     // TODO: Implement UI update for tasks
-  }
-
-  // ----------------------
-  // Load Client Documents
-  // ----------------------
-  async function loadClientDocuments(caseRef) {
-    try {
-      const supabase = getSupabaseClient();
-      const { data, error } = await supabase
-        .from('client_documents')
-        .select('*')
-        .eq('case_ref', caseRef)
-        .order('uploaded_at', { ascending: false });
-      
-      if (data && !error && data.length > 0) {
-        updateDocumentsUI(data);
-      } else {
-        console.log('No documents found');
-      }
-    } catch (error) {
-      console.error('Error loading documents:', error);
-    }
-  }
-
-  function updateDocumentsUI(documents) {
-    console.log('Documents to display:', documents);
-    // TODO: Implement UI update for documents
   }
 
   // ----------------------
@@ -420,13 +684,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const stageDefinitions = {
       'k': {
         short: 'K',
-        full: 'Know',
-        meaning: 'Initial intake and understanding of your case. We gather basic information about your situation.'
+        full: 'Contract',
+        meaning: 'Your Contract has been paid, signed and uploaded.'
       },
       'docs': {
         short: 'DOCS',
         full: 'Documentation',
-        meaning: 'Collecting and organizing all required documents. This includes passports, IDs, employment letters, etc.'
+        meaning: 'Collecting and organizing all required documents. This includes passports, IDs, Birth Certificates, etc.'
       },
       'ic': {
         short: 'IC',
@@ -435,23 +699,23 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       'aq': {
         short: 'AQ',
-        full: 'Assessment & Qualification',
-        meaning: 'Our legal team reviews your case to determine eligibility and best strategy.'
+        full: 'Additional Questions',
+        meaning: 'A brief questionnaire call to collect missing or required information for an immigration case already in progress, allowing Honest Immigration to complete the file and continue your process.'
       },
       'pd': {
         short: 'PD',
-        full: 'Petition Drafting',
-        meaning: 'Drafting the legal petition or application with all supporting evidence.'
+        full: 'Personal Declaration',
+        meaning: 'Your scheduled testimony call in which you provide your personal history and experiences needed to prepare your personal declaration for your case.'
       },
       'pdr': {
         short: 'PDR',
-        full: 'Petition Draft Review',
-        meaning: 'You review the draft petition for accuracy before final submission.'
+        full: 'Personal Declaration Reading',
+        meaning: 'A scheduled review to verify your personal declaration for accuracy, completeness, and consistency before submission.'
       },
       'app_review': {
         short: 'APP REVIEW',
         full: 'Application Review',
-        meaning: 'Final review by our senior attorneys before submission to USCIS.'
+        meaning: 'A final validation by our assistants before submission to USCIS.'
       },
       'fr': {
         short: 'FR',
@@ -460,7 +724,7 @@ document.addEventListener('DOMContentLoaded', () => {
       },
       's': {
         short: 'S',
-        full: 'Submitted',
+        full: 'Case Sent',
         meaning: 'Case has been submitted to USCIS. Now waiting for response or next steps.'
       }
     };
@@ -580,336 +844,4 @@ document.addEventListener('DOMContentLoaded', () => {
       e.stopPropagation();
       const stageKey = this.dataset.stageKey;
       const stageIndex = parseInt(this.dataset.stageIndex);
-      console.log(`Dot clicked: ${stageKey} at index ${stageIndex}`);
-      
-      if (stageKey && stageDefinitions[stageKey]) {
-        showStageInfo(stageKey, stageDefinitions[stageKey], stageIndex);
-      }
-    }
-  }
-
-  function showStageInfo(stageKey, stageInfo, index) {
-    console.log(`Showing stage info for ${stageKey} at index ${index}`);
-    
-    // Create or show stage info modal
-    let modal = document.getElementById('stageInfoModal');
-    
-    if (!modal) {
-      console.log("Creating stage info modal...");
-      // Create modal if it doesn't exist
-      modal = document.createElement('div');
-      modal.id = 'stageInfoModal';
-      modal.className = 'stage-modal-overlay';
-      modal.innerHTML = `
-        <div class="stage-modal">
-          <div class="stage-modal-header">
-            <h3>Stage ${index + 1}: ${stageInfo.full}</h3>
-            <button class="stage-modal-close">&times;</button>
-          </div>
-          <div class="stage-modal-body">
-            <div class="stage-badge">${stageInfo.short}</div>
-            <p>${stageInfo.meaning}</p>
-            <div class="stage-status">
-              <strong>Your status:</strong> 
-              <span class="stage-status-text" id="currentStageStatus">Loading...</span>
-            </div>
-          </div>
-          <div class="stage-modal-footer">
-            <button class="btn-secondary stage-modal-close">Close</button>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(modal);
-      
-      // Add close handlers
-      modal.querySelectorAll('.stage-modal-close').forEach(btn => {
-        btn.addEventListener('click', () => {
-          modal.style.display = 'none';
-        });
-      });
-      
-      // Close when clicking outside
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          modal.style.display = 'none';
-        }
-      });
-      
-      // Add CSS for modal
-      addStageModalStyles();
-    }
-    
-    // Update modal content
-    modal.querySelector('h3').textContent = `Stage ${index + 1}: ${stageInfo.full}`;
-    modal.querySelector('.stage-badge').textContent = stageInfo.short;
-    modal.querySelector('p').textContent = stageInfo.meaning;
-    
-    // Determine status for this stage
-    const caseNumber = localStorage.getItem('honest_immigration_case');
-    const statusText = getStageStatus(index, caseNumber);
-    modal.querySelector('#currentStageStatus').textContent = statusText;
-    
-    // Show modal
-    modal.style.display = 'flex';
-    console.log("Modal should be visible now");
-  }
-
-  function getStageStatus(stageIndex, caseNumber) {
-    // This function determines the status of a specific stage
-    // In a real app, you'd check the database
-    // For now, using demo logic
-    
-    const clientId = localStorage.getItem('honest_immigration_client_id');
-    
-    if (clientId === 'demo_client_123') {
-      // Demo logic
-      if (stageIndex < 2) return '✅ Completed';
-      if (stageIndex === 2) return '🟡 In Progress';
-      return '⏳ Not Started';
-    }
-    
-    // Real logic would check database here
-    return '⏳ Not Started';
-  }
-
-  function addStageModalStyles() {
-    // Only add styles once
-    if (document.getElementById('stageModalStyles')) return;
-    
-    const styles = document.createElement('style');
-    styles.id = 'stageModalStyles';
-    styles.textContent = `
-      .stage-modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 10000;
-        padding: 20px;
-      }
-      
-      .stage-modal {
-        background: white;
-        border-radius: 20px;
-        max-width: 400px;
-        width: 100%;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        overflow: hidden;
-      }
-      
-      .stage-modal-header {
-        background: linear-gradient(180deg, #2a58c7 0%, #1E3A8A 100%);
-        color: white;
-        padding: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-      
-      .stage-modal-header h3 {
-        margin: 0;
-        font-size: 18px;
-      }
-      
-      .stage-modal-close {
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        color: white;
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        cursor: pointer;
-        font-size: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      
-      .stage-modal-close:hover {
-        background: rgba(255, 255, 255, 0.3);
-      }
-      
-      .stage-modal-body {
-        padding: 25px;
-      }
-      
-      .stage-badge {
-        display: inline-block;
-        background: #3b82f6;
-        color: white;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-weight: bold;
-        font-size: 14px;
-        margin-bottom: 15px;
-      }
-      
-      .stage-modal-body p {
-        color: #64748b;
-        line-height: 1.6;
-        margin-bottom: 20px;
-      }
-      
-      .stage-status {
-        background: #f8fafc;
-        padding: 12px;
-        border-radius: 10px;
-        border-left: 4px solid #3b82f6;
-      }
-      
-      .stage-status strong {
-        color: #1e293b;
-      }
-      
-      .stage-status-text {
-        display: block;
-        margin-top: 5px;
-        color: #475569;
-      }
-      
-      .stage-modal-footer {
-        padding: 20px;
-        border-top: 1px solid #e5e7eb;
-        text-align: right;
-      }
-      
-      /* Make progress labels more interactive */
-      .progress-labels span {
-        transition: color 0.2s;
-      }
-      
-      .progress-labels span:hover {
-        color: #3b82f6;
-        text-decoration: underline !important;
-      }
-      
-      .dot-step {
-        transition: transform 0.2s;
-      }
-      
-      .dot-step:hover {
-        transform: scale(1.1);
-      }
-    `;
-    document.head.appendChild(styles);
-    console.log("Stage modal styles added");
-  }
-
-  // ----------------------
-  // Bind buttons (ONCE, using delegation)
-  // ----------------------
-  let bound = false;
-  function bindAppButtonsOnce() {
-    if (bound) return;
-    bound = true;
-    console.log("✅ Binding app buttons (once)...");
-
-    // Top buttons
-    const educationBtn = document.getElementById('educationBtn');
-    const notificationsBtn = document.getElementById('notificationsBtn');
-    const eduBackBtn = document.getElementById('eduBackBtn');
-
-    if (educationBtn) {
-      educationBtn.addEventListener('click', () => {
-        showSection('educationScreen');
-      });
-    }
-
-    if (notificationsBtn) {
-      notificationsBtn.addEventListener('click', () => {
-        showSection('updatesScreen');
-        setBottomNavActive('updates');
-        const dot = document.getElementById('notifDot');
-        if (dot) dot.style.display = 'none';
-      });
-    }
-
-    if (eduBackBtn) {
-      eduBackBtn.addEventListener('click', () => {
-        showSection('homeScreen');
-        setBottomNavActive('home');
-      });
-    }
-
-    // Bottom nav
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const key = btn.getAttribute('data-screen');
-        const sectionId = screenKeyToSectionId(key);
-        showSection(sectionId);
-        setBottomNavActive(key);
-      });
-    });
-
-    // Tabs (Documents)
-    document.querySelectorAll('.tab-btn').forEach(tab => {
-      tab.addEventListener('click', () => {
-        const target = tab.getAttribute('data-tab');
-
-        document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-
-        document.querySelectorAll('#documentsScreen .tab-content').forEach(c => c.classList.remove('active'));
-        const panel = document.getElementById(target);
-        if (panel) panel.classList.add('active');
-      });
-    });
-
-    // Accordions (Tasks)
-    document.querySelectorAll('.accordion-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-accordion');
-        const panel = document.getElementById(id);
-        if (!panel) return;
-        panel.classList.toggle('open');
-      });
-    });
-
-    // Action buttons (demo)
-    document.body.addEventListener('click', (e) => {
-      const el = e.target.closest('[data-action], #uploadPassportBtn');
-      if (!el) return;
-
-      const action = el.getAttribute('data-action') || (el.id === 'uploadPassportBtn' ? 'upload-passport' : '');
-
-      if (action === 'upload-passport' || action === 'upload-document' || action === 'take-photo') {
-        alert("Demo action: this would open an upload flow.");
-      } else if (action === 'take-action' || action === 'review-draft') {
-        alert("Demo action: this would open the task workflow.");
-      } else if (action === 'view-journey') {
-        alert("Demo action: this would show the document journey timeline.");
-      } else if (action === 'contact-manager') {
-        alert("Demo action: this would open a message/contact screen.");
-      } else if (action === 'watch-video') {
-        alert("Demo action: this would open the video player.");
-      } else if (action === 'view-faq') {
-        alert("Demo action: this would open the FAQ.");
-      }
-    });
-
-    // Progress stage click handlers
-    console.log("Setting up progress click handlers in bindAppButtonsOnce...");
-    setTimeout(setupProgressStageClicks, 800);
-  }
-
-  // ----------------------
-  // Event listeners (Login screen + logout)
-  // ----------------------
-  const loginBtn = document.getElementById('loginBtn');
-  const magicBtn = document.getElementById('magicLinkBtn');
-  const logoutBtn = document.getElementById('logoutBtn');
-
-  if (loginBtn) loginBtn.addEventListener('click', handleLogin);
-  if (magicBtn) magicBtn.addEventListener('click', handleMagicLink);
-  if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
-
-  // ----------------------
-  // Init
-  // ----------------------
-  checkLoginStatus();
-});
+      console.log(`
