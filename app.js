@@ -295,5 +295,4 @@ document.addEventListener('DOMContentLoaded', () => {
   // Init
   // ----------------------
   checkLoginStatus();
-});
-    
+}); // <-- ADD THIS CLOSING BRACE
