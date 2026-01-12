@@ -360,7 +360,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Setup click handlers for progress
-    setTimeout(setupProgressStageClicks, 100);
+    console.log("Setting up progress click handlers...");
+    setTimeout(setupProgressStageClicks, 500);
   }
 
   function updateRealProgress(currentStage) {
@@ -405,13 +406,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     // Setup click handlers for progress
-    setTimeout(setupProgressStageClicks, 100);
+    console.log("Setting up progress click handlers...");
+    setTimeout(setupProgressStageClicks, 500);
   }
 
   // ----------------------
   // Progress Stage Click Handlers
   // ----------------------
   function setupProgressStageClicks() {
+    console.log("Setting up progress stage clicks...");
+    
     // Stage definitions with meanings
     const stageDefinitions = {
       'k': {
@@ -463,12 +467,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Make progress labels clickable
     const progressLabels = document.querySelector('.progress-labels');
+    console.log("Progress labels element:", progressLabels);
+    
     if (progressLabels) {
       // Add click event to each label span
       const labels = progressLabels.querySelectorAll('span');
+      console.log("Found labels:", labels.length);
+      
       labels.forEach((label, index) => {
         // Find which stage this label represents
         const labelText = label.textContent.trim().toLowerCase().replace(/\n/g, ' ').replace(/\s+/g, ' ');
+        console.log(`Label ${index}: "${labelText}"`);
+        
         let stageKey = '';
         
         // Map label text to stage key
@@ -478,50 +488,114 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (labelText.includes('aq')) stageKey = 'aq';
         else if (labelText.includes('pd')) stageKey = 'pd';
         else if (labelText.includes('pdr')) stageKey = 'pdr';
-        else if (labelText.includes('app review')) stageKey = 'app_review';
+        else if (labelText.includes('app') && labelText.includes('review')) stageKey = 'app_review';
         else if (labelText.includes('fr')) stageKey = 'fr';
         else if (labelText.includes('s')) stageKey = 's';
         
         if (stageKey && stageDefinitions[stageKey]) {
+          console.log(`Label ${index} mapped to stage: ${stageKey}`);
+          
+          // Make label clickable
           label.style.cursor = 'pointer';
           label.style.textDecoration = 'underline';
           label.style.textDecorationStyle = 'dotted';
           label.title = `Click to learn about ${stageDefinitions[stageKey].full} stage`;
           
-          label.addEventListener('click', (e) => {
-            e.stopPropagation();
-            showStageInfo(stageKey, stageDefinitions[stageKey], index);
+          // Remove any existing listeners and add new one
+          label.removeEventListener('click', handleLabelClick);
+          label.addEventListener('click', handleLabelClick);
+          
+          // Store stage info on the element
+          label.dataset.stageKey = stageKey;
+          label.dataset.stageIndex = index;
+          
+          // Add hover effect
+          label.addEventListener('mouseenter', () => {
+            label.style.color = '#3b82f6';
           });
+          label.addEventListener('mouseleave', () => {
+            label.style.color = '';
+          });
+        } else {
+          console.log(`Label ${index} could not be mapped to a stage`);
         }
       });
+    } else {
+      console.error("Could not find .progress-labels element!");
     }
 
     // Also make progress dots clickable
     const progressDots = document.getElementById('progressDots');
+    console.log("Progress dots element:", progressDots);
+    
     if (progressDots) {
       const dots = progressDots.querySelectorAll('.dot-step');
+      console.log("Found dots:", dots.length);
+      
       dots.forEach((dot, index) => {
-        dot.style.cursor = 'pointer';
-        
         // Find which stage this dot represents
         const stageKeys = Object.keys(stageDefinitions);
         const stageKey = index < stageKeys.length ? stageKeys[index] : null;
         
         if (stageKey && stageDefinitions[stageKey]) {
-          dot.addEventListener('click', (e) => {
-            e.stopPropagation();
-            showStageInfo(stageKey, stageDefinitions[stageKey], index);
+          console.log(`Dot ${index} mapped to stage: ${stageKey}`);
+          
+          // Make dot clickable
+          dot.style.cursor = 'pointer';
+          
+          // Remove any existing listeners and add new one
+          dot.removeEventListener('click', handleDotClick);
+          dot.addEventListener('click', handleDotClick);
+          
+          // Store stage info on the element
+          dot.dataset.stageKey = stageKey;
+          dot.dataset.stageIndex = index;
+          
+          // Add hover effect
+          dot.addEventListener('mouseenter', () => {
+            dot.style.transform = 'scale(1.1)';
+          });
+          dot.addEventListener('mouseleave', () => {
+            dot.style.transform = 'scale(1)';
           });
         }
       });
+    } else {
+      console.error("Could not find #progressDots element!");
+    }
+    
+    // Click handler functions
+    function handleLabelClick(e) {
+      e.stopPropagation();
+      const stageKey = this.dataset.stageKey;
+      const stageIndex = parseInt(this.dataset.stageIndex);
+      console.log(`Label clicked: ${stageKey} at index ${stageIndex}`);
+      
+      if (stageKey && stageDefinitions[stageKey]) {
+        showStageInfo(stageKey, stageDefinitions[stageKey], stageIndex);
+      }
+    }
+    
+    function handleDotClick(e) {
+      e.stopPropagation();
+      const stageKey = this.dataset.stageKey;
+      const stageIndex = parseInt(this.dataset.stageIndex);
+      console.log(`Dot clicked: ${stageKey} at index ${stageIndex}`);
+      
+      if (stageKey && stageDefinitions[stageKey]) {
+        showStageInfo(stageKey, stageDefinitions[stageKey], stageIndex);
+      }
     }
   }
 
   function showStageInfo(stageKey, stageInfo, index) {
+    console.log(`Showing stage info for ${stageKey} at index ${index}`);
+    
     // Create or show stage info modal
     let modal = document.getElementById('stageInfoModal');
     
     if (!modal) {
+      console.log("Creating stage info modal...");
       // Create modal if it doesn't exist
       modal = document.createElement('div');
       modal.id = 'stageInfoModal';
@@ -577,6 +651,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Show modal
     modal.style.display = 'flex';
+    console.log("Modal should be visible now");
   }
 
   function getStageStatus(stageIndex, caseNumber) {
@@ -704,17 +779,25 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       
       /* Make progress labels more interactive */
+      .progress-labels span {
+        transition: color 0.2s;
+      }
+      
       .progress-labels span:hover {
         color: #3b82f6;
         text-decoration: underline !important;
       }
       
+      .dot-step {
+        transition: transform 0.2s;
+      }
+      
       .dot-step:hover {
         transform: scale(1.1);
-        transition: transform 0.2s;
       }
     `;
     document.head.appendChild(styles);
+    console.log("Stage modal styles added");
   }
 
   // ----------------------
@@ -810,7 +893,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Progress stage click handlers
-    setTimeout(setupProgressStageClicks, 300);
+    console.log("Setting up progress click handlers in bindAppButtonsOnce...");
+    setTimeout(setupProgressStageClicks, 800);
   }
 
   // ----------------------
