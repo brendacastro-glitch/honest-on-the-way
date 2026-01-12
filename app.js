@@ -1,7 +1,3 @@
-FILE 3: app.js
-
-// Honest Immigration Client Portal - Main Application
-
 document.addEventListener('DOMContentLoaded', function() {
     // ======================
     // APP STATE & CONFIGURATION
