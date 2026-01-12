@@ -156,7 +156,128 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.removeItem('honest_immigration_client_id');
     showLoginScreen();
   }
+  // ----------------------
+  // Load User Profile Data
+  // ----------------------
+  async function loadUserProfile(clientId) {
+    try {
+      const supabase = getSupabaseClient();
+      const { data, error } = await supabase
+        .from(window.APP_CONFIG.supabase.tables.clients)
+        .select('full_name, email, phone, case_number')
+        .eq('id', clientId)
+        .single();
+      
+      if (data && !error) {
+        // Update UI with real user data
+        const userName = document.getElementById('userName');
+        const userInitials = document.getElementById('userInitials');
+        const caseDisplay = document.getElementById('caseDisplay');
+        
+        if (userName) userName.textContent = data.full_name || 'Client';
+        if (userInitials) userInitials.textContent = getInitials(data.full_name || 'Client');
+        if (caseDisplay && data.case_number) {
+          caseDisplay.textContent = `Case: ${data.case_number}`;
+        }
+      }
+    } catch (error) {
+      console.error('Error loading profile:', error);
+    }
+  }
 
+  function getInitials(name) {
+    return name.split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  }
+
+  // ----------------------
+  // Load Case Data
+  // ----------------------
+  async function loadCaseData(clientId) {
+    try {
+      const supabase = getSupabaseClient();
+      const { data, error } = await supabase
+        .from(window.APP_CONFIG.supabase.tables.cases)
+        .select('*')
+        .eq('client_id', clientId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+      
+      if (data && !error) {
+        // Update progress based on real case stage
+        updateRealProgress(data.current_stage, data.total_stages);
+        
+        // Update urgent tasks if any
+        if (data.urgent_tasks && data.urgent_tasks.length > 0) {
+          updateUrgentTasks(data.urgent_tasks);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading case data:', error);
+      // Fallback to demo data
+      renderProgress();
+    }
+  }
+
+  // ----------------------
+  // Update Progress Based on Real Data
+  // ----------------------
+  function updateRealProgress(currentStage, totalStages = 9) {
+    const host = document.getElementById('progressDots');
+    if (!host) return;
+
+    // Map stage names to indices (you'll need to adjust this based on your stage names)
+    const stageMap = {
+      'intake': 0,
+      'documentation': 1,
+      'initial_contact': 2,
+      'assessment': 3,
+      'preparation': 4,
+      'preparation_review': 5,
+      'approval_review': 6,
+      'filing_ready': 7,
+      'submitted': 8
+    };
+    
+    const currentIndex = stageMap[currentStage] || 2; // Default to stage 2 if not found
+    const doneCount = currentIndex; // All stages before current are done
+    
+    host.innerHTML = '';
+    for (let i = 0; i < totalStages; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot-step';
+
+      if (i < doneCount) {
+        d.classList.add('done');
+        d.innerHTML = '<i class="fa-solid fa-check"></i>';
+      } else if (i === currentIndex) {
+        d.classList.add('current');
+        d.innerHTML = '<div class="mini"></div>';
+      } else {
+        d.innerHTML = '';
+      }
+
+      host.appendChild(d);
+    }
+  }
+
+  // ----------------------
+  // Update Urgent Tasks
+  // ----------------------
+  function updateUrgentTasks(tasks) {
+    // This is a placeholder - implement based on your UI
+    console.log('Urgent tasks:', tasks);
+    
+    // Example: Update the urgent card
+    const urgentCard = document.querySelector('.urgent-card h3');
+    if (urgentCard && tasks.length > 0) {
+      urgentCard.textContent = tasks[0].title || 'Complete pending task';
+    }
+  }
   // ----------------------
   // Demo: Progress dots (Figma-like)
   // ----------------------
