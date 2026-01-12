@@ -631,3 +631,85 @@ button{font-family:inherit}
   #appScreen{padding-left: 10px;padding-right:10px}
   .main-content{padding: 18px}
 }
+/* ===== ACCESSIBILITY & UX IMPROVEMENTS ===== */
+
+/* Focus styles for keyboard navigation */
+button:focus, input:focus, .tab-btn:focus, .nav-btn:focus {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Better hover transitions */
+.btn-primary, .btn-secondary, .btn-white, .fab-icon, .icon-btn, .nav-btn {
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover, .btn-secondary:hover, .btn-white:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+
+/* Loading states */
+.btn-primary.loading, .btn-secondary.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Error states */
+.input-group input.error {
+  border-color: var(--red);
+  background: var(--red-soft);
+}
+
+/* Success states */
+.input-group input.success {
+  border-color: var(--green);
+  background: var(--green-soft);
+}
+
+/* Ensure minimum tap target size for mobile */
+@media (max-width: 768px) {
+  .fab-icon, .icon-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  
+  .nav-btn {
+    min-height: 60px;
+    padding: 12px 8px;
+  }
+  
+  .btn-primary, .btn-secondary, .btn-white {
+    min-height: 44px;
+  }
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --text: #f1f5f9;
+    --muted: #94a3b8;
+    --border: #334155;
+  }
+  
+  body {
+    background: var(--bg);
+    color: var(--text);
+  }
+  
+  .card, .task-card, .doc-card, .update-card {
+    background: var(--card);
+  }
+  
+  .input-group input {
+    background: #1e293b;
+    color: #f1f5f9;
+    border-color: #475569;
+  }
+  
+  .input-group input:focus {
+    background: #0f172a;
+  }
+}
