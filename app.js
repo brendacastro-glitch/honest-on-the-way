@@ -591,3 +591,19 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeApp();
 
 });
+
+<script>
+  // Debug: Check if button exists
+  document.addEventListener('DOMContentLoaded', function() {
+    console.log("DEBUG: DOM loaded");
+    const btn = document.getElementById('loginBtn');
+    console.log("Login button found:", btn);
+    
+    if (btn) {
+      btn.addEventListener('click', function() {
+        console.log("DEBUG: Login button clicked!");
+        alert("Button works! Now calling handleLogin...");
+      });
+    }
+  });
+</script>
