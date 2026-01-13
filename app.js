@@ -41,14 +41,94 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Bind app interactions
-    bindAppButtonsOnce();
+  function bindAppButtonsOnce() {
+  console.log("Binding app buttons");
+  
+  // Top buttons - Add these
+  const educationBtn = document.getElementById('educationBtn');
+  const notificationsBtn = document.getElementById('notificationsBtn');
+  const eduBackBtn = document.getElementById('eduBackBtn');
+  
+  console.log("Education button found:", !!educationBtn);
+  console.log("Edu back button found:", !!eduBackBtn);
+
+  if (educationBtn) {
+    educationBtn.addEventListener('click', () => {
+      console.log("Education button clicked");
+      showSection('educationScreen');
+      // Update bottom nav (no active state for education since it's not in bottom nav)
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+    });
+  } else {
+    console.error("❌ Education button not found!");
   }
 
-  function checkLoginStatus() {
-    const isLoggedIn = localStorage.getItem('honest_immigration_logged_in') === 'true';
-    console.log("Login status:", isLoggedIn);
-    isLoggedIn ? showAppScreen() : showLoginScreen();
+  if (notificationsBtn) {
+    notificationsBtn.addEventListener('click', () => {
+      showSection('updatesScreen');
+      setBottomNavActive('updates');
+      const dot = document.getElementById('notifDot');
+      if (dot) dot.style.display = 'none';
+    });
   }
+
+  if (eduBackBtn) {
+    eduBackBtn.addEventListener('click', () => {
+      showSection('homeScreen');
+      setBottomNavActive('home');
+    });
+  }
+
+  // Bottom navigation
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const screenKey = e.currentTarget.dataset.screen;
+      console.log("Nav button clicked:", screenKey);
+      showSection(screenKeyToSectionId(screenKey));
+      setBottomNavActive(screenKey);
+    });
+  });
+
+  // Logout button
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', handleLogout);
+  }
+
+  // Upload buttons in documents section
+  document.querySelectorAll('[data-action="upload-specific"]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const docName = e.currentTarget.dataset.docName;
+      alert(`Would upload: ${docName}`);
+      // Implement actual upload logic here
+    });
+  });
+
+  // Skip buttons in documents section
+  document.querySelectorAll('[data-action="skip-document"]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const docName = e.currentTarget.dataset.docName;
+      console.log(`Skipping document: ${docName}`);
+      // Implement skip logic here
+    });
+  });
+
+  // Login button - ADDED THIS
+  const loginBtn = document.getElementById('loginBtn');
+  if (loginBtn) {
+    console.log("Found login button, adding event listener");
+    loginBtn.removeEventListener('click', handleLogin); // Remove old if exists
+    loginBtn.addEventListener('click', handleLogin);
+  } else {
+    console.error("Login button not found! Check HTML ID");
+  }
+
+  // Magic link button
+  const magicBtn = document.getElementById('magicLinkBtn');
+  if (magicBtn) {
+    magicBtn.addEventListener('click', handleMagicLink);
+  }
+}
 
   // ----------------------
   // Navigation (sections)
@@ -70,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (key === 'tasks') return 'tasksScreen';
     if (key === 'documents') return 'documentsScreen';
     if (key === 'updates') return 'updatesScreen';
+     if (key === 'education') return 'educationScreen';
     return 'homeScreen';
   }
 
