@@ -329,12 +329,15 @@
               </div>
             </div>
 
-            <button class="btn-primary full" data-action="upload-document">
-              <i class="fa-solid fa-upload"></i> Upload Document
-            </button>
-            <button class="btn-secondary full" data-action="take-photo">
-              <i class="fa-solid fa-camera"></i> Take Photo
-            </button>
+            <!-- SINGLE UPLOAD BUTTON -->
+            <div class="upload-container">
+              <input type="file" id="documentUpload" accept="image/*,.pdf,.doc,.docx" 
+                     style="display: none;" onchange="handleFileSelect(this)">
+              <button class="btn-primary full" onclick="document.getElementById('documentUpload').click()">
+                <i class="fa-solid fa-upload"></i> Upload Document
+              </button>
+              <p class="upload-hint">Supports: JPG, PNG, PDF, DOC (Max: 10MB)</p>
+            </div>
           </div>
 
           <div class="tip-card">
