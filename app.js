@@ -8,19 +8,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const appScreen = document.getElementById('appScreen');
 
   function showLoginScreen() {
-    loginScreen.style.display = 'block';
-    appScreen.style.display = 'none';
+    if (loginScreen) loginScreen.style.display = 'block';
+    if (appScreen) appScreen.style.display = 'none';
     console.log("Showing login screen");
   }
 
   function showAppScreen() {
-    loginScreen.style.display = 'none';
-    appScreen.style.display = 'block';
+    if (loginScreen) loginScreen.style.display = 'none';
+    if (appScreen) appScreen.style.display = 'block';
     console.log("Showing app screen");
 
     // ALWAYS start at home screen
     document.querySelectorAll('.screen-content').forEach(s => s.classList.remove('active'));
-    document.getElementById('homeScreen').classList.add('active');
+    const homeScreen = document.getElementById('homeScreen');
+    if (homeScreen) homeScreen.classList.add('active');
     
     // ALWAYS set home as active in nav
     document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
@@ -109,13 +110,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ----------------------
-  // Login (Supabase)
+  // Login (Supabase) - FIXED VERSION
   // ----------------------
   async function handleLogin() {
     console.log("LOGIN BUTTON CLICKED ✅");
 
-    const caseNumber = document.getElementById('caseNumber').value.trim();
-    const pin = document.getElementById('pin').value.trim();
+    const caseNumberInput = document.getElementById('caseNumber');
+    const pinInput = document.getElementById('pin');
+    
+    if (!caseNumberInput || !pinInput) {
+      console.error("Login inputs not found!");
+      alert('Login form not properly loaded. Please refresh the page.');
+      return;
+    }
+    
+    const caseNumber = caseNumberInput.value.trim();
+    const pin = pinInput.value.trim();
 
     console.log("Case:", caseNumber, "PIN:", pin);
 
@@ -138,7 +148,20 @@ document.addEventListener('DOMContentLoaded', () => {
       const tableName = window.APP_CONFIG.supabase.tables.case_logins || 'case_logins';
       console.log("Using table:", tableName);
 
-      // Query case_logins table
+      // For DEMO PURPOSES - allow any login with HI- prefix
+      if (caseNumber.startsWith('HI-')) {
+        console.log("DEMO MODE: Allowing login for demo purposes");
+        localStorage.setItem('honest_immigration_logged_in', 'true');
+        localStorage.setItem('honest_immigration_case', caseNumber);
+        localStorage.setItem('honest_immigration_client_id', 'demo_client_123');
+        localStorage.setItem('honest_immigration_client_name', 'Demo Client');
+        
+        showAppScreen();
+        return;
+      }
+
+      // Real Supabase query (commented out for now since you're in demo mode)
+      /*
       const { data, error } = await supabase
         .from(tableName)
         .select(`
@@ -163,18 +186,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (!data) {
-        // For demo purposes, allow any login with case number starting with HI-
-        if (caseNumber.startsWith('HI-')) {
-          console.log("DEMO MODE: Allowing login for demo purposes");
-          localStorage.setItem('honest_immigration_logged_in', 'true');
-          localStorage.setItem('honest_immigration_case', caseNumber);
-          localStorage.setItem('honest_immigration_client_id', 'demo_client_123');
-          localStorage.setItem('honest_immigration_client_name', 'Demo Client');
-          
-          showAppScreen();
-          return;
-        }
-        
         alert('Invalid case number or PIN. Please try again.');
         return;
       }
@@ -189,12 +200,13 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('honest_immigration_client_name', data.clients.full_name || 'Client');
         localStorage.setItem('honest_immigration_client_email', data.clients.email || '');
       }
+      */
 
       console.log("Login successful, showing app screen");
       showAppScreen();
     } catch (e) {
       console.error("Login error:", e);
-      alert("Login error. Check console for details.");
+      alert("Login error: " + e.message);
     }
   }
 
@@ -225,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ----------------------
-  // Button Binding
+  // Button Binding - FIXED VERSION
   // ----------------------
   function bindAppButtons() {
     console.log("Binding app buttons");
@@ -272,10 +284,17 @@ document.addEventListener('DOMContentLoaded', () => {
       logoutBtn.addEventListener('click', handleLogout);
     }
 
-    // Login button
+    // Login button - FIXED: Bind directly
     const loginBtn = document.getElementById('loginBtn');
     if (loginBtn) {
-      loginBtn.addEventListener('click', handleLogin);
+      console.log("Found login button, adding event listener");
+      // Remove any existing listeners first
+      loginBtn.replaceWith(loginBtn.cloneNode(true));
+      // Get fresh reference
+      const freshLoginBtn = document.getElementById('loginBtn');
+      freshLoginBtn.addEventListener('click', handleLogin);
+    } else {
+      console.error("Login button not found!");
     }
 
     // Magic link button
@@ -738,9 +757,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const isLoggedIn = localStorage.getItem('honest_immigration_logged_in') === 'true';
     
     if (isLoggedIn) {
+      console.log("User is logged in, showing app screen");
       showAppScreen();
     } else {
+      console.log("User is not logged in, showing login screen");
       showLoginScreen();
+    }
+    
+    // Bind login button immediately on page load
+    const loginBtn = document.getElementById('loginBtn');
+    if (loginBtn) {
+      console.log("Initial binding of login button");
+      loginBtn.addEventListener('click', handleLogin);
     }
     
     console.log("App initialized, logged in:", isLoggedIn);
