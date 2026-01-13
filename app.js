@@ -996,70 +996,87 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(setupProgressStageClicks, 500);
   }
 
-  function updateRealProgress(currentStage) {
-    const host = document.getElementById('progressDots');
-    if (!host) return;
+// Replace the entire setupProgressStageClicks function with this improved version:
+function setupProgressStageClicks() {
+  console.log("Setting up progress stage clicks...");
+  
+  // Stage definitions
+  const stageDefinitions = {
+    'k': { short: 'K', full: 'Know', meaning: 'Initial intake phase where we understand your case details.' },
+    'docs': { short: 'DOCS', full: 'Documentation', meaning: 'Collecting and organizing all required supporting documents.' },
+    'ic': { short: 'IC', full: 'Introductory Call', meaning: 'First meeting with your case manager to discuss strategy.' },
+    'aq': { short: 'AQ', full: 'Assessment & Qualification', meaning: 'Legal team reviews eligibility and determines best approach.' },
+    'pd': { short: 'PD', full: 'Petition Drafting', meaning: 'Our attorneys draft the complete legal petition.' },
+    'pdr': { short: 'PDR', full: 'Petition Draft Review', meaning: 'You review and confirm the accuracy of the draft petition.' },
+    'app_review': { short: 'APP REVIEW', full: 'Application Review', meaning: 'Final quality check by senior attorneys.' },
+    'fr': { short: 'FR', full: 'Filing Ready', meaning: 'All documents are complete and ready for submission.' },
+    's': { short: 'S', full: 'Submitted', meaning: 'Case has been filed with USCIS. Awaiting response.' }
+  };
 
-    // Map stage names to indices based on your progress labels
-    const stageMap = {
-      'k': 0,
-      'docs': 1,
-      'ic': 2,
-      'aq': 3,
-      'pd': 4,
-      'pdr': 5,
-      'app_review': 6,
-      'fr': 7,
-      's': 8
-    };
-    
-    // Convert stage to lowercase for matching
-    const stageKey = currentStage ? currentStage.toLowerCase() : 'ic';
-    const currentIndex = stageMap[stageKey] || 2; // Default to stage 2 if not found
-    const doneCount = currentIndex; // All stages before current are done
-    const total = 9;
-    
-    host.innerHTML = '';
-    for (let i = 0; i < total; i++) {
-      const d = document.createElement('div');
-      d.className = 'dot-step';
-
-      if (i < doneCount) {
-        d.classList.add('done');
-        d.innerHTML = '<i class="fa-solid fa-check"></i>';
-      } else if (i === currentIndex) {
-        d.classList.add('current');
-        d.innerHTML = '<div class="mini"></div>';
-      } else {
-        d.innerHTML = '';
-      }
-
-      host.appendChild(d);
-    }
-    
-    // Update the "CURRENT STAGE" text
-    const currentStageElement = document.querySelector('.current-stage');
-    if (currentStageElement) {
-      const stageNames = {
-        'k': 'Know',
-        'docs': 'Documentation',
-        'ic': 'Introductory Call',
-        'aq': 'Assessment & Qualification',
-        'pd': 'Petition Drafting',
-        'pdr': 'Petition Draft Review',
-        'app_review': 'Application Review',
-        'fr': 'Filing Ready',
-        's': 'Submitted'
-      };
-      
-      const stageName = stageNames[stageKey] || 'Documentation';
-      currentStageElement.textContent = stageName;
-    }
-    
-    // Setup click handlers for progress
-    console.log("Setting up progress click handlers...");
-    setTimeout(setupProgressStageClicks, 500);
+  // Add smoother progress bar animation
+  const progressBar = document.querySelector('.progress-rail');
+  if (progressBar) {
+    progressBar.style.transition = 'all 0.5s ease';
   }
+
+  // Make all progress elements clickable
+  document.querySelectorAll('.progress-labels span, .dot-step').forEach((el, index) => {
+    const stageKeys = Object.keys(stageDefinitions);
+    const stageKey = stageKeys[index];
+    
+    if (stageKey && stageDefinitions[stageKey]) {
+      el.style.cursor = 'pointer';
+      el.addEventListener('click', () => showStageModal(stageKey, index));
+      
+      // Add visual feedback
+      el.addEventListener('mouseenter', () => {
+        el.style.transform = 'translateY(-2px)';
+      });
+      el.addEventListener('mouseleave', () => {
+        el.style.transform = 'translateY(0)';
+      });
+    }
+  });
+}
+
+// Add this new function for stage modal:
+function showStageModal(stageKey, index) {
+  const stageInfo = stageDefinitions[stageKey];
+  if (!stageInfo) return;
+  
+  // Create modal
+  const modal = document.createElement('div');
+  modal.className = 'stage-modal-overlay';
+  modal.innerHTML = `
+    <div class="stage-modal-content">
+      <div class="stage-modal-header">
+        <span class="stage-number">Stage ${index + 1}</span>
+        <h3>${stageInfo.full} (${stageInfo.short})</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="stage-modal-body">
+        <p>${stageInfo.meaning}</p>
+        <div class="stage-status">
+          <strong>Status:</strong> 
+          <span class="status-indicator ${getStageStatusClass(index)}">
+            ${getStageStatusText(index)}
+          </span>
+        </div>
+      </div>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+  
+  // Close modal
+  modal.querySelector('.close-modal').addEventListener('click', () => {
+    modal.remove();
+  });
+  
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) modal.remove();
+  });
+}
 
   // ----------------------
   // Progress Stage Click Handlers - FIXED VERSION
