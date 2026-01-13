@@ -7,121 +7,124 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- IMPORTANT for GitHub Pages:
+       Keep it RELATIVE like this if styles.css is in the SAME folder as index.html -->
   <link rel="stylesheet" href="styles.css">
 
-  <!-- Supabase -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 </head>
 
 <body>
   <!-- LOGIN SCREEN -->
   <div class="screen" id="loginScreen">
-    <div class="login-hero">
-      <div class="hero-logo">
-        <div class="hero-badge">HI</div>
-        <h1>Honest Immigration</h1>
-        <p>Your immigration journey, made clear.</p>
-      </div>
-    </div>
-
-    <div class="login-sheet">
-      <h2>Welcome back</h2>
-
-      <div class="input-group">
-        <label for="caseNumber">Case Number</label>
-        <input type="text" id="caseNumber" placeholder="e.g., HI-2024-001234">
+    <div class="login-container">
+      <div class="logo-section">
+        <div class="logo-mark">
+          <div class="logo-ring">
+            <span>HI</span>
+          </div>
+          <h1>Honest Immigration</h1>
+          <p class="tagline">Your immigration journey, made clear.</p>
+        </div>
       </div>
 
-      <div class="input-group">
-        <label for="pin">PIN</label>
-        <input type="password" id="pin" placeholder="6-digit PIN">
+      <div class="login-form">
+        <h2>Welcome back</h2>
+
+        <div class="input-group">
+          <label for="caseNumber">Case Number</label>
+          <input type="text" id="caseNumber" placeholder="e.g., HI-2024-001234">
+        </div>
+
+        <div class="input-group">
+          <label for="pin">PIN</label>
+          <input type="password" id="pin" placeholder="6-digit PIN">
+        </div>
+
+        <button class="btn-primary" id="loginBtn" type="button">
+          <i class="fas fa-right-to-bracket"></i> Sign In
+        </button>
+
+        <div class="divider"><span>or</span></div>
+
+        <button class="btn-secondary" id="magicLinkBtn" type="button">
+          <i class="fas fa-envelope"></i> Email me a magic link
+        </button>
+
+        <p class="privacy-note">
+          <i class="fas fa-lock"></i>
+          Your information is encrypted and secure. We never share your data without your explicit consent.
+        </p>
       </div>
-
-      <button class="btn-primary" id="loginBtn">
-        <i class="fas fa-right-to-bracket"></i>
-        <span>Sign In</span>
-      </button>
-
-      <div class="divider"><span>or</span></div>
-
-      <button class="btn-secondary" id="magicLinkBtn">
-        <i class="fas fa-envelope"></i>
-        <span>Email me a magic link</span>
-      </button>
-
-      <p class="privacy-note">
-        <i class="fas fa-lock"></i>
-        Your information is encrypted and secure. We never share your data without your explicit consent.
-      </p>
     </div>
   </div>
 
-  <!-- MAIN APP -->
+  <!-- APP SCREEN -->
   <div class="screen" id="appScreen" style="display:none;">
-    <!-- TOP APP BAR -->
+    <!-- APP TOP BAR (simple) -->
     <header class="app-topbar">
       <div class="topbar-left">
-        <div class="user-chip" id="userInitials">MR</div>
-        <div class="user-meta">
-          <div class="user-hello">Welcome,</div>
-          <div class="user-name" id="userName">Maria Rodriguez</div>
-          <div class="user-case" id="caseDisplay">Case: HI-2026-00123</div>
+        <div class="avatar" id="avatarCircle">MR</div>
+        <div class="topbar-user">
+          <div class="hello" id="helloName">Welcome, Maria Rodriguez</div>
+          <div class="case" id="caseLine">Case: HI-2026-00123</div>
         </div>
       </div>
 
       <div class="topbar-right">
-        <button class="fab-icon" id="educationBtn" aria-label="Education Center" title="Education">
+        <button class="icon-btn" id="educationBtn" aria-label="Education">
           <i class="fa-solid fa-book-open"></i>
         </button>
-        <button class="fab-icon" id="notificationsBtn" aria-label="Updates" title="Updates">
-          <i class="fa-solid fa-bell"></i>
-          <span class="dot" id="notifDot" aria-hidden="true"></span>
-        </button>
-        <button class="icon-btn" id="logoutBtn" title="Log out" aria-label="Log out">
-          <i class="fas fa-right-from-bracket"></i>
+        <button class="icon-btn" id="logoutBtn" aria-label="Log out" title="Log out">
+          <i class="fa-solid fa-right-from-bracket"></i>
         </button>
       </div>
     </header>
 
-    <!-- MAIN CONTENT -->
+    <!-- MAIN -->
     <main class="main-content">
 
       <!-- HOME -->
       <section class="screen-content active" id="homeScreen">
-        <div class="card progress-card">
-          <div class="card-title">Your Case Progress</div>
-
-          <div class="progress-rail">
-            <div class="progress-labels">
-              <span>K</span><span>DOCS</span><span>IC</span><span>AQ</span><span>PD</span><span>PDR</span><span>APP<br>REVIEW</span><span>FR</span><span>S</span>
-            </div>
-
-            <div class="progress-dots" id="progressDots"></div>
-          </div>
-        </div>
-
-        <div class="card current-stage">
-          <div class="pill pill-blue">CURRENT STAGE</div>
-          <h3>Documentation Uploaded</h3>
-          <p class="muted">
-            We're gathering and reviewing all required documents for your petition.
-            This ensures your application is complete and accurate.
-          </p>
-
-          <div class="responsibility responsibility-yellow">
-            <div class="resp-left">
-              <i class="fa-solid fa-user"></i>
-              <div>
-                <div class="resp-title">You: 2 items pending</div>
-                <div class="resp-sub">Action needed by <strong>Jan 9, 2026</strong></div>
+        <div class="hero-card">
+          <div class="hero-header">
+            <div class="hero-title">Your Case Progress</div>
+            <div class="hero-icons">
+              <button class="fab" id="heroEducationBtn" title="Education Center" aria-label="Education Center">
+                <i class="fa-solid fa-book-open"></i>
+              </button>
+              <div class="fab fab-green" title="Profile" aria-label="Profile">
+                <span id="miniAvatar">MR</span>
               </div>
             </div>
           </div>
 
-          <div class="responsibility responsibility-blue">
-            <div class="resp-left">
-              <i class="fa-solid fa-building"></i>
-              <div>
+          <div class="progress-mini">
+            <div class="progress-labels" id="progressLabels"></div>
+            <div class="progress-dots" id="progressDots"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="pill pill-soft">CURRENT STAGE</div>
+          <h2 class="card-title">Documentation Uploaded</h2>
+          <p class="card-sub">
+            We're gathering and reviewing all required documents for your petition. This ensures your application is complete and accurate.
+          </p>
+
+          <div class="responsibility">
+            <div class="resp-item resp-yellow">
+              <div class="resp-icon"><i class="fa-solid fa-user"></i></div>
+              <div class="resp-text">
+                <div class="resp-title">You: 2 items pending</div>
+                <div class="resp-sub">Action needed by <strong>Jan 9, 2026</strong></div>
+              </div>
+            </div>
+
+            <div class="resp-item resp-blue">
+              <div class="resp-icon"><i class="fa-solid fa-building"></i></div>
+              <div class="resp-text">
                 <div class="resp-title">Honest Immigration</div>
                 <div class="resp-sub">Reviewing your submitted forms</div>
               </div>
@@ -129,368 +132,337 @@
           </div>
 
           <div class="status-row">
-            <i class="fa-regular fa-clock"></i>
-            <span>In Progress</span>
+            <span class="status-chip status-progress"><i class="fa-regular fa-clock"></i> In Progress</span>
           </div>
         </div>
 
         <div class="card urgent-card">
-          <div class="urgent-pill"><i class="fa-solid fa-triangle-exclamation"></i> URGENT</div>
-          <h3>Upload passport copy</h3>
-          <p class="muted">Required for identity verification</p>
+          <div class="urgent-top">
+            <span class="status-chip status-urgent"><i class="fa-solid fa-triangle-exclamation"></i> URGENT</span>
+          </div>
+          <h2 class="card-title">Upload passport copy</h2>
+          <p class="card-sub">Required for identity verification</p>
 
-          <div class="urgent-footer">
+          <div class="urgent-bottom">
             <div class="due">Due in <strong>3 days</strong></div>
-            <button class="btn-white" id="uploadPassportBtn">
-              <i class="fa-solid fa-upload"></i>
-              Upload Now
+            <button class="btn-pill" id="uploadNowBtn" type="button">
+              <i class="fa-solid fa-upload"></i> Upload Now
             </button>
           </div>
         </div>
 
-        <div class="card next-card">
-          <div class="pill pill-gray">UP NEXT</div>
+        <div class="card">
+          <div class="pill pill-soft">UP NEXT</div>
           <div class="next-row">
             <div>
-              <h3>Introductory Call</h3>
-              <p class="muted">Once your essential documents are complete, we'll schedule your introductory call with your case manager.</p>
+              <h2 class="card-title">Introductory Call</h2>
+              <p class="card-sub">Once your essential documents are complete, we'll schedule your introductory call with your case manager.</p>
             </div>
-            <i class="fa-solid fa-chevron-right"></i>
+            <div class="chev"><i class="fa-solid fa-chevron-right"></i></div>
           </div>
         </div>
 
-        <div class="grid-2">
-          <div class="mini-card">
-            <div class="mini-number">14d</div>
-            <div class="mini-sub">Since Case Started</div>
+        <div class="stats-grid">
+          <div class="stat">
+            <div class="stat-big">14d</div>
+            <div class="stat-sub">Since Case Started</div>
           </div>
-          <div class="mini-card">
-            <div class="mini-number">7</div>
-            <div class="mini-sub">Missing Stages To Send Case</div>
+          <div class="stat">
+            <div class="stat-big">7</div>
+            <div class="stat-sub">Missing Stages To Send Case</div>
           </div>
         </div>
 
-        <div class="card simple-card">
-          <h3>Progress</h3>
-          <p class="muted">Working on Case</p>
+        <div class="card compact">
+          <div class="card-title-sm">Progress</div>
+          <div class="card-sub">Working on Case</div>
         </div>
       </section>
 
       <!-- TASKS -->
       <section class="screen-content" id="tasksScreen">
-        <div class="screen-header">
-          <h2>Your Action Items</h2>
-          <p class="muted">Stay on track with your case requirements</p>
+        <div class="page-header">
+          <h1>Your Action Items</h1>
+          <p>Stay on track with your case requirements</p>
         </div>
 
         <div class="task-card">
           <div class="task-top">
-            <div class="task-icon red"><i class="fa-solid fa-file-signature"></i></div>
+            <div class="task-icon task-red"><i class="fa-regular fa-file-lines"></i></div>
             <div class="task-main">
               <div class="task-title">Sign petition authorization</div>
               <div class="task-meta">
-                <span class="badge pending"><span class="dot-mini red"></span> Pending</span>
+                <span class="status-chip status-pending"><span class="dot"></span> Pending</span>
                 <span class="meta"><i class="fa-regular fa-calendar"></i> Due Tomorrow</span>
               </div>
             </div>
           </div>
+          <button class="btn-primary btn-wide" type="button">Take Action Now</button>
 
-          <button class="btn-primary full" data-action="take-action">
-            Take Action Now
+          <button class="accordion-btn" type="button" data-acc="acc1">
+            <i class="fa-regular fa-circle-question"></i> Why this matters
+            <i class="fa-solid fa-chevron-down chev"></i>
           </button>
-
-          <button class="accordion-btn" data-accordion="a1">
-            <span><i class="fa-regular fa-circle-question"></i> Why this matters</span>
-            <i class="fa-solid fa-chevron-down"></i>
-          </button>
-          <div class="accordion-panel" id="a1">
-            This authorization lets our team prepare and submit the correct filings on your behalf.
+          <div class="accordion-panel" id="acc1">
+            This authorization allows our team to finalize and file certain petition components on your behalf.
           </div>
         </div>
 
         <div class="task-card">
           <div class="task-top">
-            <div class="task-icon blue"><i class="fa-solid fa-briefcase"></i></div>
+            <div class="task-icon task-blue"><i class="fa-regular fa-file"></i></div>
             <div class="task-main">
               <div class="task-title">Upload employment letter</div>
               <div class="task-meta">
-                <span class="badge submitted"><span class="dot-mini amber"></span> Submitted</span>
+                <span class="status-chip status-submitted"><span class="dot"></span> Submitted</span>
               </div>
             </div>
           </div>
 
-          <button class="accordion-btn" data-accordion="a2">
-            <span><i class="fa-regular fa-circle-question"></i> Why this matters</span>
-            <i class="fa-solid fa-chevron-down"></i>
+          <button class="accordion-btn" type="button" data-acc="acc2">
+            <i class="fa-regular fa-circle-question"></i> Why this matters
+            <i class="fa-solid fa-chevron-down chev"></i>
           </button>
-          <div class="accordion-panel" id="a2">
-            Employment documentation helps establish eligibility and supports your case timeline.
+          <div class="accordion-panel" id="acc2">
+            Employment letters support your background information and can strengthen your case documentation.
           </div>
         </div>
 
         <div class="task-card">
           <div class="task-top">
-            <div class="task-icon green"><i class="fa-solid fa-id-card"></i></div>
+            <div class="task-icon task-green"><i class="fa-regular fa-id-card"></i></div>
             <div class="task-main">
               <div class="task-title">Confirm personal details</div>
               <div class="task-meta">
-                <span class="badge approved"><span class="dot-mini green"></span> Approved</span>
+                <span class="status-chip status-approved"><span class="dot"></span> Approved</span>
               </div>
             </div>
           </div>
 
-          <button class="accordion-btn" data-accordion="a3">
-            <span><i class="fa-regular fa-circle-question"></i> Why this matters</span>
-            <i class="fa-solid fa-chevron-down"></i>
+          <button class="accordion-btn" type="button" data-acc="acc3">
+            <i class="fa-regular fa-circle-question"></i> Why this matters
+            <i class="fa-solid fa-chevron-down chev"></i>
           </button>
-          <div class="accordion-panel" id="a3">
-            Confirming your details ensures forms match your identity documents exactly.
+          <div class="accordion-panel" id="acc3">
+            Accurate personal details prevent delays and avoid rework during filing and review.
           </div>
         </div>
 
         <div class="task-card">
           <div class="task-top">
-            <div class="task-icon red"><i class="fa-solid fa-passport"></i></div>
+            <div class="task-icon task-red"><i class="fa-regular fa-image"></i></div>
             <div class="task-main">
               <div class="task-title">Upload passport copy</div>
               <div class="task-meta">
-                <span class="badge pending"><span class="dot-mini red"></span> Pending</span>
+                <span class="status-chip status-pending"><span class="dot"></span> Pending</span>
                 <span class="meta"><i class="fa-regular fa-calendar"></i> Due Jan 9, 2026</span>
               </div>
             </div>
           </div>
+          <button class="btn-primary btn-wide" type="button">Take Action Now</button>
 
-          <button class="btn-primary full" data-action="upload-passport">
-            Take Action Now
+          <button class="accordion-btn" type="button" data-acc="acc4">
+            <i class="fa-regular fa-circle-question"></i> Why this matters
+            <i class="fa-solid fa-chevron-down chev"></i>
           </button>
-
-          <button class="accordion-btn" data-accordion="a4">
-            <span><i class="fa-regular fa-circle-question"></i> Why this matters</span>
-            <i class="fa-solid fa-chevron-down"></i>
-          </button>
-          <div class="accordion-panel" id="a4">
-            A clear passport photo is required to verify identity and proceed to the next stage.
+          <div class="accordion-panel" id="acc4">
+            We need a clear photo of the information page to verify identity and proceed to the next stage.
           </div>
         </div>
 
         <div class="task-card">
           <div class="task-top">
-            <div class="task-icon purple"><i class="fa-solid fa-file-lines"></i></div>
+            <div class="task-icon task-blue"><i class="fa-regular fa-pen-to-square"></i></div>
             <div class="task-main">
               <div class="task-title">Review draft petition</div>
               <div class="task-meta">
-                <span class="badge pending"><span class="dot-mini red"></span> Pending</span>
+                <span class="status-chip status-pending"><span class="dot"></span> Pending</span>
               </div>
             </div>
           </div>
+          <button class="btn-primary btn-wide" type="button">Complete Task</button>
 
-          <button class="btn-primary full" data-action="review-draft">
-            Complete Task
+          <button class="accordion-btn" type="button" data-acc="acc5">
+            <i class="fa-regular fa-circle-question"></i> Why this matters
+            <i class="fa-solid fa-chevron-down chev"></i>
           </button>
-
-          <button class="accordion-btn" data-accordion="a5">
-            <span><i class="fa-regular fa-circle-question"></i> Why this matters</span>
-            <i class="fa-solid fa-chevron-down"></i>
-          </button>
-          <div class="accordion-panel" id="a5">
-            Your review helps confirm facts and catch any errors before filing.
+          <div class="accordion-panel" id="acc5">
+            Reviewing drafts ensures the filing reflects your story accurately before it is submitted.
           </div>
         </div>
 
         <div class="help-card">
           <h3>Need help with a task?</h3>
           <p>Your dedicated case manager is here to assist you.</p>
-          <button class="btn-white full" data-action="contact-manager">
-            Contact Your Case Manager
-          </button>
+          <button class="btn-secondary btn-wide" type="button">Contact Your Case Manager</button>
         </div>
       </section>
 
       <!-- DOCUMENTS -->
       <section class="screen-content" id="documentsScreen">
-        <div class="screen-header">
-          <h2>Documents</h2>
-          <p class="muted">Track your document submissions</p>
+        <div class="page-header">
+          <h1>Documents</h1>
+          <p>Track your document submissions</p>
         </div>
 
-        <div class="tabs">
-          <button class="tab-btn active" data-tab="toUpload">To Upload (1)</button>
-          <button class="tab-btn" data-tab="underReview">Under Review (2)</button>
-          <button class="tab-btn" data-tab="approved">Approved (2)</button>
+        <div class="tabs" role="tablist">
+          <button class="tab active" type="button" data-tab="docUpload">To Upload (1)</button>
+          <button class="tab" type="button" data-tab="docReview">Under Review (2)</button>
+          <button class="tab" type="button" data-tab="docApproved">Approved (2)</button>
         </div>
 
-        <div class="tab-content active" id="toUpload">
+        <div class="tab-panel active" id="docUpload">
           <div class="doc-card">
-            <div class="doc-row">
-              <div class="doc-ic blue"><i class="fa-regular fa-image"></i></div>
-              <div class="doc-main">
-                <div class="doc-title">Passport Copy</div>
-                <span class="badge required">Required</span>
-              </div>
-            </div>
+            <div class="doc-left doc-blue"><i class="fa-regular fa-image"></i></div>
+            <div class="doc-body">
+              <div class="doc-title">Passport Copy</div>
+              <span class="status-chip status-required">Required</span>
 
-            <button class="btn-primary full" data-action="upload-document">
-              <i class="fa-solid fa-upload"></i> Upload Document
-            </button>
-            <button class="btn-secondary full" data-action="take-photo">
-              <i class="fa-solid fa-camera"></i> Take Photo
-            </button>
+              <button class="btn-primary btn-wide mt" type="button">
+                <i class="fa-solid fa-upload"></i> Upload Document
+              </button>
+              <button class="btn-outline btn-wide mt-sm" type="button">
+                <i class="fa-solid fa-camera"></i> Take Photo
+              </button>
+            </div>
           </div>
 
-          <div class="tip-card">
-            <div class="tip-title"><i class="fa-solid fa-camera-retro"></i> How to take a good photo</div>
-            <ul>
-              <li>✓ Use good lighting - avoid shadows</li>
-              <li>✓ Capture the entire document</li>
-              <li>✓ Make sure all text is readable</li>
-              <li>✓ Hold camera steady to avoid blur</li>
-              <li>✓ No cropped pictures are allowed</li>
+          <div class="tips-card">
+            <div class="tips-title"><i class="fa-solid fa-camera"></i> How to take a good photo</div>
+            <ul class="tips">
+              <li>Use good lighting - avoid shadows</li>
+              <li>Capture the entire document</li>
+              <li>Make sure all text is readable</li>
+              <li>Hold camera steady to avoid blur</li>
+              <li>No cropped pictures are allowed</li>
             </ul>
           </div>
         </div>
 
-        <div class="tab-content" id="underReview">
+        <div class="tab-panel" id="docReview">
           <div class="doc-card">
-            <div class="doc-row">
-              <div class="doc-ic amber"><i class="fa-regular fa-file-lines"></i></div>
-              <div class="doc-main">
-                <div class="doc-title">Employment Letter</div>
-                <div class="doc-sub"><i class="fa-regular fa-clock"></i> Under review by Sarah Chen</div>
-              </div>
+            <div class="doc-left doc-yellow"><i class="fa-regular fa-file-lines"></i></div>
+            <div class="doc-body">
+              <div class="doc-title">Employment Letter</div>
+              <div class="doc-sub"><i class="fa-regular fa-clock"></i> Under review by Sarah Chen</div>
+              <button class="btn-outline btn-wide mt-sm" type="button">
+                <i class="fa-regular fa-eye"></i> View Journey
+              </button>
             </div>
-            <button class="btn-secondary full" data-action="view-journey">
-              <i class="fa-regular fa-eye"></i> View Journey
-            </button>
           </div>
 
           <div class="doc-card">
-            <div class="doc-row">
-              <div class="doc-ic amber"><i class="fa-regular fa-file-lines"></i></div>
-              <div class="doc-main">
-                <div class="doc-title">Resume / CV</div>
-                <div class="doc-sub"><i class="fa-regular fa-clock"></i> Under review by Sarah Chen</div>
-              </div>
+            <div class="doc-left doc-yellow"><i class="fa-regular fa-file"></i></div>
+            <div class="doc-body">
+              <div class="doc-title">Resume / CV</div>
+              <div class="doc-sub"><i class="fa-regular fa-clock"></i> Under review by Sarah Chen</div>
+              <button class="btn-outline btn-wide mt-sm" type="button">
+                <i class="fa-regular fa-eye"></i> View Journey
+              </button>
             </div>
-            <button class="btn-secondary full" data-action="view-journey">
-              <i class="fa-regular fa-eye"></i> View Journey
-            </button>
           </div>
         </div>
 
-        <div class="tab-content" id="approved">
+        <div class="tab-panel" id="docApproved">
           <div class="doc-card">
-            <div class="doc-row">
-              <div class="doc-ic green"><i class="fa-regular fa-file-lines"></i></div>
-              <div class="doc-main">
-                <div class="doc-title">Diploma - Bachelor's Degree</div>
-                <div class="doc-sub"><i class="fa-regular fa-circle-check"></i> Approved on Jan 4, 2026</div>
-              </div>
+            <div class="doc-left doc-green"><i class="fa-regular fa-file"></i></div>
+            <div class="doc-body">
+              <div class="doc-title">Diploma - Bachelor's Degree</div>
+              <div class="doc-sub"><i class="fa-regular fa-circle-check"></i> Approved on Jan 4, 2026</div>
+              <button class="btn-outline btn-wide mt-sm" type="button">
+                <i class="fa-regular fa-eye"></i> View Journey
+              </button>
             </div>
-            <button class="btn-secondary full" data-action="view-journey">
-              <i class="fa-regular fa-eye"></i> View Journey
-            </button>
           </div>
 
           <div class="doc-card">
-            <div class="doc-row">
-              <div class="doc-ic green"><i class="fa-regular fa-file-lines"></i></div>
-              <div class="doc-main">
-                <div class="doc-title">Previous I-94</div>
-                <div class="doc-sub"><i class="fa-regular fa-circle-check"></i> Approved on Jan 3, 2026</div>
-              </div>
+            <div class="doc-left doc-green"><i class="fa-regular fa-file"></i></div>
+            <div class="doc-body">
+              <div class="doc-title">Previous I-94</div>
+              <div class="doc-sub"><i class="fa-regular fa-circle-check"></i> Approved on Jan 3, 2026</div>
+              <button class="btn-outline btn-wide mt-sm" type="button">
+                <i class="fa-regular fa-eye"></i> View Journey
+              </button>
             </div>
-            <button class="btn-secondary full" data-action="view-journey">
-              <i class="fa-regular fa-eye"></i> View Journey
-            </button>
           </div>
         </div>
       </section>
 
       <!-- UPDATES -->
       <section class="screen-content" id="updatesScreen">
-        <div class="screen-header">
-          <h2>Updates</h2>
-          <p class="muted">Stay informed about your case progress</p>
+        <div class="page-header">
+          <h1>Updates</h1>
+          <p>Stay informed about your case progress</p>
         </div>
 
-        <div class="update-card accent-amber">
-          <div class="update-head">
-            <div class="update-ic amber"><i class="fa-solid fa-upload"></i></div>
-            <div>
-              <div class="update-type">Document Request</div>
-              <div class="update-title">New Document Requested</div>
+        <div class="update-card update-orange">
+          <div class="update-icon"><i class="fa-solid fa-upload"></i></div>
+          <div class="update-body">
+            <div class="update-meta">Document Request</div>
+            <div class="update-title">New Document Requested</div>
+            <div class="update-text">
+              We need your passport copy to verify your identity. Please upload a clear photo of the information page.
             </div>
-          </div>
-          <p class="muted">
-            We need your passport copy to verify your identity. Please upload a clear photo of the information page.
-          </p>
-          <button class="btn-primary full" data-action="upload-passport">Upload Now</button>
-          <div class="update-foot">
-            <span>Today</span><span>2:30 PM</span>
-          </div>
-        </div>
-
-        <div class="update-card accent-blue">
-          <div class="update-head">
-            <div class="update-ic blue"><i class="fa-solid fa-bell"></i></div>
-            <div>
-              <div class="update-type">Case Update</div>
-              <div class="update-title">Stage Progress: Document Collection</div>
+            <button class="btn-primary btn-wide mt-sm" type="button">Upload Now</button>
+            <div class="update-time">
+              <span>Today</span><span>2:30 PM</span>
             </div>
-          </div>
-          <p class="muted">
-            Your case has moved to the Document Collection stage. We're gathering all required materials for your T Visa or Visa VAWA.
-          </p>
-          <div class="update-foot">
-            <span>Today</span><span>10:15 AM</span>
           </div>
         </div>
 
-        <div class="update-card accent-green">
-          <div class="update-head">
-            <div class="update-ic green"><i class="fa-solid fa-check"></i></div>
-            <div>
-              <div class="update-type">Confirmation</div>
-              <div class="update-title">Document Approved</div>
+        <div class="update-card update-blue">
+          <div class="update-icon"><i class="fa-regular fa-bell"></i></div>
+          <div class="update-body">
+            <div class="update-meta">Case Update</div>
+            <div class="update-title">Stage Progress: Document Collection</div>
+            <div class="update-text">
+              Your case has moved to the Document Collection stage. We're gathering all required materials for your T Visa or Visa VAWA.
             </div>
-          </div>
-          <p class="muted">
-            Your Bachelor's Degree diploma has been reviewed and approved. This document is ready for filing.
-          </p>
-          <div class="update-foot">
-            <span>Yesterday</span><span>4:45 PM</span>
+            <div class="update-time">
+              <span>Today</span><span>10:15 AM</span>
+            </div>
           </div>
         </div>
 
-        <div class="update-card accent-purple">
-          <div class="update-head">
-            <div class="update-ic purple"><i class="fa-solid fa-lightbulb"></i></div>
-            <div>
-              <div class="update-type">Guidance</div>
-              <div class="update-title">Understanding Your Timeline</div>
+        <div class="update-card update-green">
+          <div class="update-icon"><i class="fa-regular fa-circle-check"></i></div>
+          <div class="update-body">
+            <div class="update-meta">Confirmation</div>
+            <div class="update-title">Document Approved</div>
+            <div class="update-text">
+              Your Bachelor's Degree diploma has been reviewed and approved. This document is ready for filing.
             </div>
-          </div>
-          <p class="muted">
-            All clients must submit Passport and Birth Certificate to start their case. The rest of the documentation typically takes 7-14 days to upload.
-          </p>
-          <div class="update-foot">
-            <span>Yesterday</span><span>9:00 AM</span>
+            <div class="update-time">
+              <span>Yesterday</span><span>4:45 PM</span>
+            </div>
           </div>
         </div>
 
-        <div class="update-card accent-green">
-          <div class="update-head">
-            <div class="update-ic green"><i class="fa-solid fa-check"></i></div>
-            <div>
-              <div class="update-type">Confirmation</div>
-              <div class="update-title">Signed Document Submitted Successfully</div>
+        <div class="update-card update-purple">
+          <div class="update-icon"><i class="fa-regular fa-lightbulb"></i></div>
+          <div class="update-body">
+            <div class="update-meta">Guidance</div>
+            <div class="update-title">Understanding Your Timeline</div>
+            <div class="update-text">
+              All clients must submit Passport and Birth Certificate to start their case. Document Collection typically takes 7–14 days.
+            </div>
+            <div class="update-time">
+              <span>Yesterday</span><span>9:00 AM</span>
             </div>
           </div>
-          <p class="muted">
-            Your personal details form has been submitted. Our team will review it within 24 hours.
-          </p>
-          <div class="update-foot">
-            <span>Jan 5</span><span>3:20 PM</span>
+        </div>
+
+        <div class="update-card update-green">
+          <div class="update-icon"><i class="fa-regular fa-circle-check"></i></div>
+          <div class="update-body">
+            <div class="update-meta">Confirmation</div>
+            <div class="update-title">Signed Document Submitted Successfully</div>
+            <div class="update-text">
+              Your personal details form has been submitted. Our team will review it within 24 hours.
+            </div>
+            <div class="update-time">
+              <span>Jan 5</span><span>3:20 PM</span>
+            </div>
           </div>
         </div>
       </section>
@@ -498,84 +470,88 @@
       <!-- EDUCATION -->
       <section class="screen-content" id="educationScreen">
         <div class="edu-hero">
-          <button class="btn-pill" id="eduBackBtn"><i class="fa-solid fa-arrow-left"></i> Back</button>
-          <h2><i class="fa-solid fa-book-open"></i> Education Center</h2>
+          <button class="back-btn" id="eduBackBtn" type="button">
+            <i class="fa-solid fa-arrow-left"></i> Back
+          </button>
+          <h1>Education Center</h1>
           <p>Learn about the immigration process at your own pace</p>
         </div>
 
-        <div class="edu-tip">
-          💡 Quick videos that help you understand each step of your journey. Watch anytime, anywhere.
+        <div class="info-banner">
+          <i class="fa-regular fa-lightbulb"></i>
+          Quick videos that help you understand each step of your journey. Watch anytime, anywhere.
         </div>
 
-        <div class="video-card blue">
-          <div class="video-thumb">
+        <div class="video-card v-blue">
+          <div class="video-top">
+            <span class="video-chip">Visa Types</span>
+            <span class="video-time"><i class="fa-regular fa-clock"></i> 1:45</span>
             <div class="play"><i class="fa-solid fa-play"></i></div>
-            <span class="chip">Visa Types</span>
-            <span class="dur"><i class="fa-regular fa-clock"></i> 1:45</span>
           </div>
-          <div class="video-body">
+          <div class="video-bottom">
             <h3>Understanding Your T Visa or Visa VAWA</h3>
             <p>Learn about T and VAWA visas and how they work</p>
-            <button class="link-btn" data-action="watch-video">Watch Now <i class="fa-solid fa-chevron-right"></i></button>
+            <a class="watch" href="#" onclick="return false;">Watch Now <i class="fa-solid fa-chevron-right"></i></a>
           </div>
         </div>
 
-        <div class="video-card green">
-          <div class="video-thumb">
+        <div class="video-card v-green">
+          <div class="video-top">
+            <span class="video-chip">Process</span>
+            <span class="video-time"><i class="fa-regular fa-clock"></i> 2:00</span>
             <div class="play"><i class="fa-solid fa-play"></i></div>
-            <span class="chip">Process</span>
-            <span class="dur"><i class="fa-regular fa-clock"></i> 2:00</span>
           </div>
-          <div class="video-body">
+          <div class="video-bottom">
             <h3>The USCIS Process Explained</h3>
             <p>Step-by-step guide through the immigration process</p>
-            <button class="link-btn" data-action="watch-video">Watch Now <i class="fa-solid fa-chevron-right"></i></button>
+            <a class="watch" href="#" onclick="return false;">Watch Now <i class="fa-solid fa-chevron-right"></i></a>
           </div>
         </div>
 
-        <div class="video-card amber">
-          <div class="video-thumb">
+        <div class="video-card v-orange">
+          <div class="video-top">
+            <span class="video-chip">Documents</span>
+            <span class="video-time"><i class="fa-regular fa-clock"></i> 1:30</span>
             <div class="play"><i class="fa-solid fa-play"></i></div>
-            <span class="chip">Documents</span>
-            <span class="dur"><i class="fa-regular fa-clock"></i> 1:30</span>
           </div>
-          <div class="video-body">
+          <div class="video-bottom">
             <h3>Common Document Requirements</h3>
             <p>What documents you'll need and why</p>
-            <button class="link-btn" data-action="watch-video">Watch Now <i class="fa-solid fa-chevron-right"></i></button>
+            <a class="watch" href="#" onclick="return false;">Watch Now <i class="fa-solid fa-chevron-right"></i></a>
           </div>
         </div>
 
-        <div class="video-card pink">
-          <div class="video-thumb">
+        <div class="video-card v-pink">
+          <div class="video-top">
+            <span class="video-chip">Rights</span>
+            <span class="video-time"><i class="fa-regular fa-clock"></i> 1:40</span>
             <div class="play"><i class="fa-solid fa-play"></i></div>
-            <span class="chip">Rights</span>
-            <span class="dur"><i class="fa-regular fa-clock"></i> 1:40</span>
           </div>
-          <div class="video-body">
+          <div class="video-bottom">
             <h3>Your Rights as an Applicant</h3>
             <p>Know your rights during the immigration process</p>
-            <button class="link-btn" data-action="watch-video">Watch Now <i class="fa-solid fa-chevron-right"></i></button>
+            <a class="watch" href="#" onclick="return false;">Watch Now <i class="fa-solid fa-chevron-right"></i></a>
           </div>
         </div>
 
-        <div class="video-card teal">
-          <div class="video-thumb">
+        <div class="video-card v-teal">
+          <div class="video-top">
+            <span class="video-chip">Appointments</span>
+            <span class="video-time"><i class="fa-regular fa-clock"></i> 1:55</span>
             <div class="play"><i class="fa-solid fa-play"></i></div>
-            <span class="chip">Appointments</span>
-            <span class="dur"><i class="fa-regular fa-clock"></i> 1:55</span>
           </div>
-          <div class="video-body">
+          <div class="video-bottom">
             <h3>Biometrics Appointment</h3>
             <p>What to expect at your biometrics appointment</p>
-            <button class="link-btn" data-action="watch-video">Watch Now <i class="fa-solid fa-chevron-right"></i></button>
+            <a class="watch" href="#" onclick="return false;">Watch Now <i class="fa-solid fa-chevron-right"></i></a>
           </div>
         </div>
 
         <div class="faq-card">
+          <div class="faq-emoji">🫠</div>
           <h3>Still have questions?</h3>
           <p>Browse our FAQ or reach out to your case manager</p>
-          <button class="btn-primary full" data-action="view-faq">View FAQ</button>
+          <button class="btn-primary btn-wide" type="button">View FAQ</button>
         </div>
       </section>
 
@@ -583,24 +559,22 @@
 
     <!-- BOTTOM NAV -->
     <nav class="bottom-nav">
-      <button class="nav-btn active" data-screen="home" aria-label="Home">
+      <button class="nav-btn active" data-screen="home" type="button">
         <i class="fas fa-home"></i><span>Home</span>
       </button>
-      <button class="nav-btn" data-screen="tasks" aria-label="My Tasks">
+      <button class="nav-btn" data-screen="tasks" type="button">
         <i class="fas fa-check-square"></i><span>My Tasks</span>
       </button>
-      <button class="nav-btn" data-screen="documents" aria-label="Documents">
+      <button class="nav-btn" data-screen="documents" type="button">
         <i class="fas fa-file-alt"></i><span>Documents</span>
       </button>
-      <button class="nav-btn" data-screen="updates" aria-label="Updates">
+      <button class="nav-btn" data-screen="updates" type="button">
         <i class="fas fa-bell"></i><span>Updates</span>
       </button>
     </nav>
   </div>
 
-  <!-- JS -->
   <script src="config.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
-
