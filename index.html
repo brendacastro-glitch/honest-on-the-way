@@ -29,16 +29,15 @@
 
       <div class="input-group">
         <label for="caseNumber">Case Number</label>
-        <input type="text" id="caseNumber" placeholder="e.g., HI-2024-001234" value="HI-2024-001234">
+        <input type="text" id="caseNumber" placeholder="e.g., HI-2024-001234">
       </div>
 
       <div class="input-group">
         <label for="pin">PIN</label>
-        <input type="password" id="pin" placeholder="6-digit PIN" value="123456">
+        <input type="password" id="pin" placeholder="6-digit PIN">
       </div>
 
-      <!-- FIX: Added onclick here for testing -->
-      <button class="btn-primary" id="loginBtn" onclick="simpleLogin()">
+      <button class="btn-primary" id="loginBtn">
         <i class="fas fa-right-to-bracket"></i>
         <span>Sign In</span>
       </button>
@@ -330,15 +329,12 @@
               </div>
             </div>
 
-            <!-- SINGLE UPLOAD BUTTON -->
-            <div class="upload-container">
-              <input type="file" id="documentUpload" accept="image/*,.pdf,.doc,.docx" 
-                     style="display: none;" onchange="handleFileSelect(this)">
-              <button class="btn-primary full" onclick="document.getElementById('documentUpload').click()">
-                <i class="fa-solid fa-upload"></i> Upload Document
-              </button>
-              <p class="upload-hint">Supports: JPG, PNG, PDF, DOC (Max: 10MB)</p>
-            </div>
+            <button class="btn-primary full" data-action="upload-document">
+              <i class="fa-solid fa-upload"></i> Upload Document
+            </button>
+            <button class="btn-secondary full" data-action="take-photo">
+              <i class="fa-solid fa-camera"></i> Take Photo
+            </button>
           </div>
 
           <div class="tip-card">
@@ -499,83 +495,87 @@
         </div>
       </section>
 
-      <!-- EDUCATION CENTER -->
+      <!-- EDUCATION -->
       <section class="screen-content" id="educationScreen">
-        <div class="screen-header">
-          <button id="eduBackBtn" class="back-btn">
-            <i class="fa-solid fa-arrow-left"></i> Back
-          </button>
-          <h2>Education Center</h2>
-          <p class="muted">Learn about the immigration process at your own pace</p>
+        <div class="edu-hero">
+          <button class="btn-pill" id="eduBackBtn"><i class="fa-solid fa-arrow-left"></i> Back</button>
+          <h2><i class="fa-solid fa-book-open"></i> Education Center</h2>
+          <p>Learn about the immigration process at your own pace</p>
         </div>
 
-        <div class="feature-card">
-          <div class="feature-icon">
-            <i class="fa-solid fa-magnifying-glass"></i>
-          </div>
-          <div class="feature-content">
-            <h3>Quick Videos</h3>
-            <p>Short videos that help you understand each step of your journey. Watch anytime, anywhere.</p>
-          </div>
+        <div class="edu-tip">
+          💡 Quick videos that help you understand each step of your journey. Watch anytime, anywhere.
         </div>
 
-        <div class="video-card edu-video">
-          <div class="video-thumbnail">
-            <div class="duration">1:45</div>
-            <div class="thumbnail-placeholder">
-              <i class="fa-solid fa-play"></i>
-            </div>
-            <div class="video-category">Visa Types</div>
+        <div class="video-card blue">
+          <div class="video-thumb">
+            <div class="play"><i class="fa-solid fa-play"></i></div>
+            <span class="chip">Visa Types</span>
+            <span class="dur"><i class="fa-regular fa-clock"></i> 1:45</span>
           </div>
-          <div class="video-info">
-            <h4>Understanding Your T Visa or Visa VAWA</h4>
+          <div class="video-body">
+            <h3>Understanding Your T Visa or Visa VAWA</h3>
             <p>Learn about T and VAWA visas and how they work</p>
-            <button class="btn-primary watch-btn" data-action="watch-video">
-              <i class="fa-solid fa-play"></i> Watch Now
-            </button>
+            <button class="link-btn" data-action="watch-video">Watch Now <i class="fa-solid fa-chevron-right"></i></button>
           </div>
         </div>
 
-        <div class="video-card edu-video">
-          <div class="video-thumbnail">
-            <div class="duration">2:15</div>
-            <div class="thumbnail-placeholder">
-              <i class="fa-solid fa-play"></i>
-            </div>
-            <div class="video-category">Documents</div>
+        <div class="video-card green">
+          <div class="video-thumb">
+            <div class="play"><i class="fa-solid fa-play"></i></div>
+            <span class="chip">Process</span>
+            <span class="dur"><i class="fa-regular fa-clock"></i> 2:00</span>
           </div>
-          <div class="video-info">
-            <h4>Document Checklist Walkthrough</h4>
-            <p>Step-by-step guide to gathering your required documents</p>
-            <button class="btn-primary watch-btn" data-action="watch-video">
-              <i class="fa-solid fa-play"></i> Watch Now
-            </button>
+          <div class="video-body">
+            <h3>The USCIS Process Explained</h3>
+            <p>Step-by-step guide through the immigration process</p>
+            <button class="link-btn" data-action="watch-video">Watch Now <i class="fa-solid fa-chevron-right"></i></button>
           </div>
         </div>
 
-        <div class="video-card edu-video">
-          <div class="video-thumbnail">
-            <div class="duration">1:30</div>
-            <div class="thumbnail-placeholder">
-              <i class="fa-solid fa-play"></i>
-            </div>
-            <div class="video-category">Process</div>
+        <div class="video-card amber">
+          <div class="video-thumb">
+            <div class="play"><i class="fa-solid fa-play"></i></div>
+            <span class="chip">Documents</span>
+            <span class="dur"><i class="fa-regular fa-clock"></i> 1:30</span>
           </div>
-          <div class="video-info">
-            <h4>Timeline Expectations</h4>
-            <p>What to expect at each stage of your immigration journey</p>
-            <button class="btn-primary watch-btn" data-action="watch-video">
-              <i class="fa-solid fa-play"></i> Watch Now
-            </button>
+          <div class="video-body">
+            <h3>Common Document Requirements</h3>
+            <p>What documents you'll need and why</p>
+            <button class="link-btn" data-action="watch-video">Watch Now <i class="fa-solid fa-chevron-right"></i></button>
           </div>
         </div>
 
-        <div class="help-card">
+        <div class="video-card pink">
+          <div class="video-thumb">
+            <div class="play"><i class="fa-solid fa-play"></i></div>
+            <span class="chip">Rights</span>
+            <span class="dur"><i class="fa-regular fa-clock"></i> 1:40</span>
+          </div>
+          <div class="video-body">
+            <h3>Your Rights as an Applicant</h3>
+            <p>Know your rights during the immigration process</p>
+            <button class="link-btn" data-action="watch-video">Watch Now <i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+        </div>
+
+        <div class="video-card teal">
+          <div class="video-thumb">
+            <div class="play"><i class="fa-solid fa-play"></i></div>
+            <span class="chip">Appointments</span>
+            <span class="dur"><i class="fa-regular fa-clock"></i> 1:55</span>
+          </div>
+          <div class="video-body">
+            <h3>Biometrics Appointment</h3>
+            <p>What to expect at your biometrics appointment</p>
+            <button class="link-btn" data-action="watch-video">Watch Now <i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+        </div>
+
+        <div class="faq-card">
           <h3>Still have questions?</h3>
-          <p>Your dedicated case manager is here to help explain anything unclear.</p>
-          <button class="btn-white full" data-action="contact-manager">
-            Contact Your Case Manager
-          </button>
+          <p>Browse our FAQ or reach out to your case manager</p>
+          <button class="btn-primary full" data-action="view-faq">View FAQ</button>
         </div>
       </section>
 
@@ -599,46 +599,8 @@
   </div>
 
   <!-- JS -->
-  <!-- TEMPORARILY COMMENT OUT CONFIG.JS -->
-  <!-- <script src="config.js"></script> -->
-  
-  <!-- SIMPLE TEST SCRIPT FIRST -->
-  <script>
-    // SIMPLE LOGIN FUNCTION THAT DEFINITELY WORKS
-    function simpleLogin() {
-      console.log("SIMPLE LOGIN CALLED!");
-      
-      const caseNumber = document.getElementById('caseNumber').value;
-      const pin = document.getElementById('pin').value;
-      
-      console.log("Case:", caseNumber, "PIN:", pin);
-      
-      if (!caseNumber || !pin) {
-        alert('Please enter case number and PIN');
-        return;
-      }
-      
-      if (caseNumber.startsWith('HI-')) {
-        // Hide login, show app
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('appScreen').style.display = 'block';
-        
-        // Store login info
-        localStorage.setItem('honest_immigration_logged_in', 'true');
-        localStorage.setItem('honest_immigration_case', caseNumber);
-        
-        alert('Login successful! Welcome to the app.');
-      } else {
-        alert('For demo: Please use case number starting with HI- (e.g., HI-2024-001234)');
-      }
-    }
-    
-    // Check if page loaded
-    console.log("✅ Page loaded with simple login!");
-    alert("Full app loaded! Try login with HI-2024-001234 and any PIN.");
-  </script>
-  
-  <!-- Load app.js after the simple login works -->
-  <!-- <script src="app.js"></script> -->
+  <script src="config.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
+
