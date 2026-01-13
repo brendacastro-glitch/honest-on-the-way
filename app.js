@@ -1726,3 +1726,4 @@ if (!document.getElementById('globalAppStyles')) {
   `;
   document.head.appendChild(styles);
 }
+
