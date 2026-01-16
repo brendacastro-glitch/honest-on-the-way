@@ -296,7 +296,7 @@ body{
   background:#fff;
 }
 .status-progress{ border-color: rgba(37,99,235,.25); color: var(--blue2); }
-.status-urgent{ border-color: rgba(239,68,68,.25); color: var(--red); background:#FFF5F5; }
+.status-urgent{ border-color: rgba(239,68,68,.25); color: var(--red); background:#A80000 at 71%; }
 .status-pending{ border-color: rgba(239,68,68,.20); color: #B91C1C; background:#FFF1F2; }
 .status-submitted{ border-color: rgba(245,158,11,.25); color:#92400E; background:#FFFBEB; }
 .status-approved{ border-color: rgba(16,185,129,.25); color:#065F46; background:#ECFDF5; }
